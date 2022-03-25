@@ -156,6 +156,9 @@
           EDITOR = "nvim";
           PATH = "$PATH:$HOME/.local/bin"; # fix for pip deps
       };
+      sessionVariables = {
+          DOCKER_BUILDKIT = 1;
+      };
       shellAliases = {
         pbcopy = "xsel --clipboard --input";
         open = "xdg-open";
