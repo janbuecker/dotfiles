@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   # Home Manager needs a bit of information about you and the
@@ -19,7 +19,9 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
+  # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+
   home.packages = with pkgs; [ 
     git 
     ripgrep
@@ -87,7 +89,19 @@
       '';
   };
 
-  programs.gpg.enable = true;
+  programs.go = {
+    enable = true;
+    goPrivate = [ "gitlab.shopware.com" ];
+    goPath = "opt/go";
+  };
+
+  programs.gpg = {
+      enable = true;
+      publicKeys = [{
+        source = ./apps/gnupg/pubkey.pub;
+        trust = "ultimate";
+      }];
+  };
 
   programs.git = {
       enable = true;
@@ -133,6 +147,7 @@
 
   programs.zsh = {
       enable = true;
+      enableCompletion = false;
       oh-my-zsh = {
           enable = true;
           plugins = ["git" "docker" "docker-compose" "aws" "safe-paste"];
@@ -235,5 +250,12 @@
       ".ssh/cloud".source = config.lib.file.mkOutOfStoreSymlink ./secrets/ssh/cloud;
       ".ssh/config".source = config.lib.file.mkOutOfStoreSymlink ./secrets/ssh/config;
       ".netrc".source = config.lib.file.mkOutOfStoreSymlink ./secrets/netrc;
+  };
+
+  # fix for gpg
+  home.activation = {
+      fixgpg = lib.hm.dag.entryAfter ["writeBoundary"] ''
+        chmod 700 ~/.gnupg
+      '';
   };
 }
