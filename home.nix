@@ -38,7 +38,6 @@
     glab
     docker-compose_2
     gnupg
-    neovim
     temporal
     xsel
     fzf
@@ -47,9 +46,49 @@
     alacritty
     bitwarden-cli
     git-crypt
+    jpegoptim
+    unrar
   ];
 
+  programs.neovim = {
+      enable = true;
+      viAlias = true;
+      vimAlias = true;
+      plugins = with pkgs.vimPlugins; [
+        nerdtree
+        nerdtree-git-plugin
+        vim-nerdtree-tabs
+
+        vim-gitgutter
+
+        lightline-vim
+
+        dracula-vim
+
+        popup-nvim
+        plenary-nvim
+        telescope-nvim
+
+        nvim-treesitter
+        nvim-treesitter-textobjects
+        nvim-lspconfig
+
+        lspsaga-nvim
+      ];
+      extraConfig = ''
+        ${builtins.readFile ./apps/nvim/defaults.vim}
+        ${builtins.readFile ./apps/nvim/go.vim}
+
+        lua << EOF
+          ${builtins.readFile ./apps/nvim/lsp.lua}
+          ${builtins.readFile ./apps/nvim/lspsaga.lua}
+          ${builtins.readFile ./apps/nvim/treesitter.lua}
+        EOF
+      '';
+  };
+
   programs.gpg.enable = true;
+
   programs.git = {
       enable = true;
 
@@ -100,49 +139,79 @@
       };
       localVariables = {
           EDITOR = "nvim";
+          PATH = "$PATH:$HOME/.local/bin"; # fix for pip deps
       };
       shellAliases = {
         pbcopy = "xsel --clipboard --input";
         open = "xdg-open";
         adminer = "php -S 0.0.0.0:8080 $HOME/Downloads/adminer.php";
-        ykrestart = "gpgconf --reload scdaemon && gpgconf --kill gpg-agent &&
-        gpg-connect-agent updatestartuptty /bye";
-        vim = "nvim";
-        vi = "nvim";
-        asume = ". awsume";
+        ykrestart = "gpgconf --reload scdaemon && gpgconf --kill gpg-agent && gpg-connect-agent updatestartuptty /bye";
+        awsume = ". awsume";
         ssh = "TERM=xterm-256color ssh";
       };
       initExtra = ''
+        # custom console theme
         source .oh-my-zsh/custom/themes/honukai.zsh-theme
 
+        # Yubikey setup
         export GPG_TTY="$(tty)"
         gpg-connect-agent /bye
         export SSH_AUTH_SOCK="/run/user/$UID/gnupg/S.gpg-agent.ssh"
+        export GIT_SSH="/usr/bin/ssh"
 
-cdp () {
-    cd $(~/bin/dir_select "$@");
-}
-
-ecsexec () {
-    if [ "$1" = "" ]; then echo "missing version"; return; fi
-    if [ "$2" = "fpm" ]; then
-        containerName=fpm
-        serviceName=shopware
-    elif [ "$2" = "nginx" ]; then
-        containerName=nginx
-        serviceName=shopware
-    elif [ "$2" = "kraftwork" ]; then
-        containerName=kraftwork
-        serviceName=kraftwork
-    else
-        echo "invalid target - kraftwork or fpm"
-        return
-    fi
-
-    taskID=$(aws ecs list-tasks --cluster shopware-application --service-name $serviceName-$1 | jq '.taskArns[0]' -r | cut -d'/' -f3)
-    aws ecs execute-command --interactive --command /bin/bash --task $taskID --cluster shopware-application --container $containerName
-}
+        # custom scripts
+        ${builtins.readFile ./apps/zsh/scripts.sh}
       '';
+  };
+  
+  programs.alacritty = {
+      enable = false;
+      settings = {
+          colors.primary = {
+              background = "#282a36";
+              foreground = "#f8f8f2";
+          };
+          colors.normal = {
+              black = "#000000";
+              red = "#ff5555";
+              green = "#50fa7b";
+              yellow = "#f1fa8c";
+              blue = "#caa9fa";
+              magenta = "#ff79c6";
+              cyan = "#8be9fd";
+              white = "#bfbfbf";
+          };
+          colors.bright = {
+              black = "#575b70";
+              red = "#ff6e67";
+              green = "#5af78e";
+              yellow = "#f4f99d";
+              blue = "#caa9fa";
+              magenta = "#ff92d0";
+              cyan = "#9aedfe";
+              white = "#e6e6e6";
+          };
+          hints.enabled = [
+            {
+                regex = "(ipfs:|ipns:|magnet:|mailto:|gemini:|gopher:|https:|http:|news:|file:|git:|ssh:|ftp:)[^\u0000-\u001F\u007F-\u009F<>\\\"\\s{-}\\^⟨⟩`]+";
+                command = "xdg-open";
+                post_processing = true;
+
+                mouse.enabled = true;
+                mouse.mods = "Control";
+
+                binding.key = "U";
+                binding.mods = "Control|Shift";
+            }
+          ];
+          key_bindings = [
+            { 
+                key = "Return";
+                mods = "Control|Shift";
+                action = "SpawnNewInstance";
+            }
+          ];
+      };
   };
 
   services = {
@@ -155,6 +224,16 @@ ecsexec () {
     };
   };
 
-  home.file.".oh-my-zsh/custom/themes/honukai.zsh-theme".source =
-  ./honukai.zsh-theme;
+  home.file = {
+      ".oh-my-zsh/custom/themes/honukai.zsh-theme".source = config.lib.file.mkOutOfStoreSymlink ./apps/oh-my-zsh/honukai.zsh-theme;
+      ".config/alacritty/alacritty.yml".source = config.lib.file.mkOutOfStoreSymlink ./apps/alacritty/alacritty.yml;
+      ".gnupg/pubkey.pub".source = config.lib.file.mkOutOfStoreSymlink ./apps/gnupg/pubkey.pub;
+      
+      # secrets
+      ".aws/config".source = config.lib.file.mkOutOfStoreSymlink ./secrets/aws/config;
+      ".aws/credentials".source = config.lib.file.mkOutOfStoreSymlink ./secrets/aws/credentials;
+      ".ssh/cloud".source = config.lib.file.mkOutOfStoreSymlink ./secrets/ssh/cloud;
+      ".ssh/config".source = config.lib.file.mkOutOfStoreSymlink ./secrets/ssh/config;
+      ".netrc".source = config.lib.file.mkOutOfStoreSymlink ./secrets/netrc;
+  };
 }
