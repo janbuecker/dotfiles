@@ -38,7 +38,7 @@
     php
     phpPackages.composer
     glab
-    docker-compose_2
+    docker-compose
     gnupg
     temporal
     xsel
@@ -50,7 +50,11 @@
     git-crypt
     jpegoptim
     unrar
+    direnv
   ];
+
+  programs.direnv.enable = true;
+  programs.direnv.nix-direnv.enable = true;
 
   programs.neovim = {
       enable = true;
@@ -114,7 +118,7 @@
 
       aliases = {
         rs = "restore --staged";
-        amend = "commit --maned --reuse-message=HEAD";
+        amend = "commit --amend --reuse-message=HEAD";
       };
 
       extraConfig = {
@@ -154,7 +158,7 @@
       };
       localVariables = {
           EDITOR = "nvim";
-          PATH = "$PATH:$HOME/.local/bin"; # fix for pip deps
+          PATH = "$PATH:$GOPATH/bin:$HOME/.local/bin"; # fix for pip deps
       };
       sessionVariables = {
           DOCKER_BUILDKIT = 1;
