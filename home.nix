@@ -51,6 +51,9 @@
     jpegoptim
     unrar
     direnv
+    python39
+    python39Packages.pip
+    dig
   ];
 
   programs.direnv.enable = true;
@@ -101,6 +104,9 @@
 
   programs.gpg = {
       enable = true;
+      scdaemonSettings = {
+          disable-ccid = true;
+      };
       publicKeys = [{
         source = ./apps/gnupg/pubkey.pub;
         trust = "ultimate";
@@ -154,7 +160,7 @@
       enableCompletion = false;
       oh-my-zsh = {
           enable = true;
-          plugins = ["git" "docker" "docker-compose" "aws" "safe-paste"];
+          plugins = ["git" "docker" "docker-compose" "aws"];
       };
       localVariables = {
           EDITOR = "nvim";
@@ -173,7 +179,7 @@
       };
       initExtra = ''
         # custom console theme
-        source .oh-my-zsh/custom/themes/honukai.zsh-theme
+        source $HOME/.oh-my-zsh/custom/themes/honukai.zsh-theme
 
         # Yubikey setup
         export GPG_TTY="$(tty)"
