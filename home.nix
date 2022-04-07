@@ -51,9 +51,8 @@
     jpegoptim
     unrar
     direnv
-    python39
-    python39Packages.pip
     dig
+    wireguard-tools
   ];
 
   programs.direnv.enable = true;
@@ -176,6 +175,7 @@
         ykrestart = "gpgconf --reload scdaemon && gpgconf --kill gpg-agent && gpg-connect-agent updatestartuptty /bye";
         awsume = ". awsume";
         ssh = "TERM=xterm-256color ssh";
+        hm = "home-manager";
       };
       initExtra = ''
         # custom console theme
