@@ -1,5 +1,7 @@
 { config, pkgs, lib, ... }:
-
+let
+  unstable = import <unstable> { config = { allowUnfree = true; }; };
+in
 {
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
@@ -23,7 +25,6 @@
   nixpkgs.config.allowUnfree = true;
 
   home.packages = with pkgs; [ 
-    git 
     ripgrep
     wget
     curl
@@ -32,20 +33,19 @@
     htop
     jq
     go
-    awscli2
-    golangci-lint
-    terraform_1
+    unstable.awscli2
+    unstable.golangci-lint
+    unstable.terraform_1
     php
     phpPackages.composer
     glab
     docker-compose
     gnupg
-    temporal
+    unstable.temporal
     xsel
     fzf
     zsh
     oh-my-zsh
-    alacritty
     bitwarden-cli
     git-crypt
     jpegoptim
@@ -53,47 +53,14 @@
     direnv
     dig
     wireguard-tools
+    regctl
+    unstable.neovim
+    natscli
+    nodejs
   ];
 
   programs.direnv.enable = true;
   programs.direnv.nix-direnv.enable = true;
-
-  programs.neovim = {
-      enable = true;
-      viAlias = true;
-      vimAlias = true;
-      plugins = with pkgs.vimPlugins; [
-        nerdtree
-        nerdtree-git-plugin
-        vim-nerdtree-tabs
-
-        vim-gitgutter
-
-        lightline-vim
-
-        dracula-vim
-
-        popup-nvim
-        plenary-nvim
-        telescope-nvim
-
-        nvim-treesitter
-        nvim-treesitter-textobjects
-        nvim-lspconfig
-
-        lspsaga-nvim
-      ];
-      extraConfig = ''
-        ${builtins.readFile ./apps/nvim/defaults.vim}
-        ${builtins.readFile ./apps/nvim/go.vim}
-
-        lua << EOF
-          ${builtins.readFile ./apps/nvim/lsp.lua}
-          ${builtins.readFile ./apps/nvim/lspsaga.lua}
-          ${builtins.readFile ./apps/nvim/treesitter.lua}
-        EOF
-      '';
-  };
 
   programs.go = {
     enable = true;
@@ -114,6 +81,7 @@
 
   programs.git = {
       enable = true;
+      package = unstable.git;
 
       signing.key = "C87088800768BC0E";
       signing.signByDefault = true;
@@ -162,7 +130,7 @@
           plugins = ["git" "docker" "docker-compose" "aws"];
       };
       localVariables = {
-          EDITOR = "nvim";
+          EDITOR = "lvim";
           PATH = "$PATH:$GOPATH/bin:$HOME/.local/bin"; # fix for pip deps
       };
       sessionVariables = {
@@ -176,6 +144,8 @@
         awsume = ". awsume";
         ssh = "TERM=xterm-256color ssh";
         hm = "home-manager";
+        vi = "lvim";
+        vim = "lvim";
       };
       initExtra = ''
         # custom console theme
@@ -192,54 +162,13 @@
       '';
   };
   
-  programs.alacritty = {
-      enable = false;
-      settings = {
-          colors.primary = {
-              background = "#282a36";
-              foreground = "#f8f8f2";
-          };
-          colors.normal = {
-              black = "#000000";
-              red = "#ff5555";
-              green = "#50fa7b";
-              yellow = "#f1fa8c";
-              blue = "#caa9fa";
-              magenta = "#ff79c6";
-              cyan = "#8be9fd";
-              white = "#bfbfbf";
-          };
-          colors.bright = {
-              black = "#575b70";
-              red = "#ff6e67";
-              green = "#5af78e";
-              yellow = "#f4f99d";
-              blue = "#caa9fa";
-              magenta = "#ff92d0";
-              cyan = "#9aedfe";
-              white = "#e6e6e6";
-          };
-          hints.enabled = [
-            {
-                regex = "(ipfs:|ipns:|magnet:|mailto:|gemini:|gopher:|https:|http:|news:|file:|git:|ssh:|ftp:)[^\u0000-\u001F\u007F-\u009F<>\\\"\\s{-}\\^⟨⟩`]+";
-                command = "xdg-open";
-                post_processing = true;
-
-                mouse.enabled = true;
-                mouse.mods = "Control";
-
-                binding.key = "U";
-                binding.mods = "Control|Shift";
-            }
-          ];
-          key_bindings = [
-            { 
-                key = "Return";
-                mods = "Control|Shift";
-                action = "SpawnNewInstance";
-            }
-          ];
-      };
+  programs.kitty = {
+    enable = true;
+    theme = "Dracula";
+    extraConfig = ''
+        mouse_map left click ungrabbed no-op
+        mouse_map ctrl+left release grabbed,ungrabbed mouse_handle_click link
+    '';
   };
 
   services = {
@@ -263,6 +192,8 @@
       ".ssh/cloud".source = config.lib.file.mkOutOfStoreSymlink ./secrets/ssh/cloud;
       ".ssh/config".source = config.lib.file.mkOutOfStoreSymlink ./secrets/ssh/config;
       ".netrc".source = config.lib.file.mkOutOfStoreSymlink ./secrets/netrc;
+      ".config/wireguard/prod.private-key.gpg".source = config.lib.file.mkOutOfStoreSymlink ./secrets/wireguard/prod.private-key.gpg;
+      ".config/wireguard/staging.private-key.gpg".source = config.lib.file.mkOutOfStoreSymlink ./secrets/wireguard/staging.private-key.gpg;
   };
 
   # fix for gpg
