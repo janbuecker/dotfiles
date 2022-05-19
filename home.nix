@@ -32,7 +32,6 @@ in
     zip
     htop
     jq
-    go
     unstable.awscli2
     unstable.golangci-lint
     unstable.terraform_1
@@ -64,6 +63,7 @@ in
 
   programs.go = {
     enable = true;
+    package = unstable.go_1_18;
     goPrivate = [ "gitlab.shopware.com" ];
     goPath = "opt/go";
   };
