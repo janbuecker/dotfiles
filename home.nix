@@ -6,7 +6,7 @@ in
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
   home.username = "jbuecker";
-  home.homeDirectory = "/home/jbuecker";
+  home.homeDirectory = "/Users/jbuecker";
 
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
@@ -33,7 +33,7 @@ in
     htop
     jq
     unstable.awscli2
-    unstable.golangci-lint
+  # golangci-lint
     unstable.terraform_1
     php
     phpPackages.composer
@@ -50,9 +50,8 @@ in
     jpegoptim
     unrar
     direnv
-    dig
     wireguard-tools
-    regctl
+  # regctl
     unstable.neovim
     natscli
     nodejs
@@ -152,10 +151,10 @@ in
         source $HOME/.oh-my-zsh/custom/themes/honukai.zsh-theme
 
         # Yubikey setup
-        export GPG_TTY="$(tty)"
-        gpg-connect-agent /bye
-        export SSH_AUTH_SOCK="/run/user/$UID/gnupg/S.gpg-agent.ssh"
         export GIT_SSH="/usr/bin/ssh"
+        export GPG_TTY="$(tty)"
+        export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+        gpgconf --launch gpg-agent
 
         # custom scripts
         ${builtins.readFile ./apps/zsh/scripts.sh}
@@ -168,23 +167,17 @@ in
     extraConfig = ''
         mouse_map left click ungrabbed no-op
         mouse_map ctrl+left release grabbed,ungrabbed mouse_handle_click link
-    '';
-  };
 
-  services = {
-    gpg-agent = {
-        enable = true;
-        enableSshSupport = true;
-        defaultCacheTtl = 60;
-        maxCacheTtl = 120;
-        pinentryFlavor = "qt";
-    };
+        map alt+left send_text all \x1b\x62
+        map alt+right send_text all \x1b\x66
+    '';
   };
 
   home.file = {
       ".oh-my-zsh/custom/themes/honukai.zsh-theme".source = config.lib.file.mkOutOfStoreSymlink ./apps/oh-my-zsh/honukai.zsh-theme;
       ".config/alacritty/alacritty.yml".source = config.lib.file.mkOutOfStoreSymlink ./apps/alacritty/alacritty.yml;
       ".gnupg/pubkey.pub".source = config.lib.file.mkOutOfStoreSymlink ./apps/gnupg/pubkey.pub;
+      ".gnupg/gpg-agent.conf".source = config.lib.file.mkOutOfStoreSymlink ./apps/gnupg/gpg-agent.conf;
       
       # secrets
       ".aws/config".source = config.lib.file.mkOutOfStoreSymlink ./secrets/aws/config;
@@ -194,12 +187,5 @@ in
       ".netrc".source = config.lib.file.mkOutOfStoreSymlink ./secrets/netrc;
       ".config/wireguard/prod.private-key.gpg".source = config.lib.file.mkOutOfStoreSymlink ./secrets/wireguard/prod.private-key.gpg;
       ".config/wireguard/staging.private-key.gpg".source = config.lib.file.mkOutOfStoreSymlink ./secrets/wireguard/staging.private-key.gpg;
-  };
-
-  # fix for gpg
-  home.activation = {
-      fixgpg = lib.hm.dag.entryAfter ["writeBoundary"] ''
-        chmod 700 ~/.gnupg
-      '';
   };
 }
