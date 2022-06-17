@@ -15,7 +15,6 @@ in
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.allowBroken = true;
 
   home.packages = with pkgs; [ 
     tmux
@@ -29,7 +28,7 @@ in
     htop
     jq
     pigz
-    #awscli2
+    awscli
     unstable.ssm-session-manager-plugin
     golangci-lint
     php
@@ -143,7 +142,7 @@ in
       plugins = ["git" "docker" "docker-compose" "aws"];
     };
     localVariables = {
-      PATH = "$PATH:$GOPATH/bin:$HOME/.local/bin:$HOME/Library/Python/3.8/bin:$HOME/bin"; # fix for pip deps
+      PATH = "$PATH:/usr/local/bin:$GOPATH/bin:$HOME/.local/bin:$HOME/Library/Python/3.8/bin:$HOME/bin"; # fix for pip deps
     };
     sessionVariables = {
       DOCKER_BUILDKIT = 1;
@@ -160,7 +159,6 @@ in
       vim = "lvim";
       dig = "dog";
       ping = "gping";
-      rm = "rip";
     };
     initExtra = ''
       # custom console theme
