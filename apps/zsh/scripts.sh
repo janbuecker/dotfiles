@@ -18,7 +18,7 @@ ecsexec () {
         return
     fi
 
-    taskID=$(aws ecs list-tasks --cluster shopware-application --service-name $serviceName-$1 | jq '.taskArns[0]' -r | cut -d'/' -f3)
+    taskID=$(aws ecs list-tasks --cluster shopware-application --service-name $serviceName-$1 | jq '.taskArns[]' -r | cut -d'/' -f3 | fzf)
     aws ecs execute-command --interactive --command /bin/bash --task $taskID --cluster shopware-application --container $containerName
 }
 

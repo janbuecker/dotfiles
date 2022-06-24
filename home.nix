@@ -19,6 +19,8 @@ in
   home.packages = with pkgs; [ 
     tmux
     coreutils
+    gnused
+    gnugrep
     findutils
     ripgrep
     wget
@@ -30,7 +32,6 @@ in
     pigz
     awscli
     unstable.ssm-session-manager-plugin
-    golangci-lint
     php
     phpPackages.composer
     glab
@@ -153,12 +154,12 @@ in
       adminer = "php -S 0.0.0.0:8080 $HOME/Downloads/adminer.php";
       ykrestart = "gpgconf --reload scdaemon && gpgconf --kill gpg-agent && gpg-connect-agent updatestartuptty /bye";
       awsume = ". awsume";
-      # ssh = "TERM=xterm-256color ssh"; # required when using kitty
       hm = "home-manager";
       vi = "lvim";
       vim = "lvim";
       dig = "dog";
       ping = "gping";
+      tmux = "tmux -u";
     };
     initExtra = ''
       # custom console theme
@@ -175,31 +176,8 @@ in
     '';
   };
 
-  programs.kitty = {
-    enable = true;
-    theme = "Tokyo Night";
-    font = {
-      name = "JetBrains Mono";
-      size = 16;
-    };
-    extraConfig = ''
-      mouse_map left click ungrabbed no-op
-      mouse_map ctrl+left release grabbed,ungrabbed mouse_handle_click link
-
-      map alt+left send_text all \x1b\x62
-      map alt+right send_text all \x1b\x66
-
-      # Move the active window in the indicated direction
-      map shift+up move_window up
-      map shift+left move_window left
-      map shift+right move_window right
-      map shift+down move_window down
-      '';
-  };
-
   home.file = {
     ".oh-my-zsh/custom/themes/honukai.zsh-theme".source = config.lib.file.mkOutOfStoreSymlink ./apps/oh-my-zsh/honukai.zsh-theme;
-    ".config/alacritty/alacritty.yml".source = config.lib.file.mkOutOfStoreSymlink ./apps/alacritty/alacritty.yml;
     ".gnupg/pubkey.pub".source = config.lib.file.mkOutOfStoreSymlink ./apps/gnupg/pubkey.pub;
     ".gnupg/gpg-agent.conf".source = config.lib.file.mkOutOfStoreSymlink ./apps/gnupg/gpg-agent.conf;
 
