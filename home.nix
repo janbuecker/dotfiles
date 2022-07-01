@@ -1,6 +1,7 @@
 { config, pkgs, lib, ... }:
 let
   unstable = import <unstable> { config = { allowUnfree = true; }; };
+  php = pkgs.php80.buildEnv { extraConfig = "memory_limit = 2G"; };
 in
 {
   home.username = "jbuecker";
@@ -34,12 +35,15 @@ in
     unstable.ssm-session-manager-plugin
     php
     phpPackages.composer
+    phpPackages.psalm
+    phpPackages.phpstan
     glab
     docker-compose
     gnupg
     unstable.temporal
     xsel
     fzf
+    fd
     zsh
     oh-my-zsh
     bitwarden-cli
