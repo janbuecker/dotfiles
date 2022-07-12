@@ -31,7 +31,6 @@ in
     htop
     jq
     pigz
-    awscli
     unstable.ssm-session-manager-plugin
     php
     phpPackages.composer
@@ -40,7 +39,7 @@ in
     glab
     docker-compose
     gnupg
-    unstable.temporal
+    temporal-cli
     xsel
     fzf
     fd
@@ -53,7 +52,7 @@ in
     direnv
     wireguard-tools
     wireguard-go
-    neovim
+    unstable.neovim
     natscli
     nodejs
     dogdns

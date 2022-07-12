@@ -56,6 +56,12 @@ lvim.builtin.treesitter.ensure_installed = {
 lvim.builtin.treesitter.ignore_install = { "haskell" }
 lvim.builtin.treesitter.highlight.enabled = true
 
+local parser_configs = require("nvim-treesitter.parsers").get_parser_configs()
+parser_configs.hcl = {
+    filetype = "hcl", "terraform",
+}
+
+
 -- ---@usage disable automatic installation of servers
 lvim.lsp.automatic_servers_installation = true
 
@@ -74,6 +80,9 @@ lvim.lsp.automatic_servers_installation = true
 --   --Enable completion triggered by <c-x><c-o>
 --   buf_set_option("omnifunc", "v:lua.vim.lsp.omnifunc")
 -- end
+require("lvim.lsp.manager").setup("terraformls", {
+    filetype = { "terraform", "tf" },
+})
 
 -- -- set a formatter, this will override the language server formatting capabilities (if it exists)
 local formatters = require "lvim.lsp.null-ls.formatters"
@@ -89,7 +98,6 @@ linters.setup {
     -- php
     { name = "php" },
     { name = "phpstan" },
-    { name = "psalm" },
 }
 
 -- Additional Plugins
