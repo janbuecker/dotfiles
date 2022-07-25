@@ -61,6 +61,7 @@ in
     rm-improved
     tldr
     tfswitch
+    lazygit
   ];
 
   programs.direnv = {
@@ -79,7 +80,7 @@ in
 
   programs.go = {
     enable = true;
-    package = unstable.go_1_18;
+    package = pkgs.go_1_18;
     goPrivate = [ "gitlab.shopware.com" ];
     goPath = "opt/go";
   };
@@ -114,6 +115,7 @@ in
       push.default = "simple";
       fetch.prune = true;
       init.defaultBranch = "main";
+      push.autoSetupRemote = true;
     };
 
     ignores = [
@@ -163,6 +165,7 @@ in
       dig = "dog";
       ping = "gping";
       tmux = "tmux -u";
+      lg = "lazygit";
     };
     initExtra = ''
       # custom console theme

@@ -5,6 +5,7 @@ vim.g.tokyonight_style = "night"
 lvim.log.level = "warn"
 lvim.format_on_save = true
 lvim.colorscheme = "tokyonight"
+lvim.colorscheme = "onedarker"
 
 vim.o.tabstop = 4 -- Insert 4 spaces for a tab
 vim.o.shiftwidth = 4 -- Change the number of space characters inserted for indentation
@@ -15,6 +16,8 @@ lvim.leader = "space"
 lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 lvim.keys.normal_mode["<C-e>"] = ":Telescope oldfiles<cr>"
 
+lvim.builtin.which_key.mappings["sf"] = { "<cmd>Telescope find_files no_ignore=true<cr>", "Find File" }
+lvim.builtin.which_key.mappings["gg"] = { "<cmd>LazyGit<CR>", "LazyGit" }
 lvim.builtin.which_key.mappings["P"] = { "<cmd>Telescope projects<CR>", "Projects" }
 lvim.builtin.which_key.mappings["x"] = {
     name = "+Trouble",
@@ -58,7 +61,7 @@ lvim.builtin.treesitter.highlight.enabled = true
 
 local parser_configs = require("nvim-treesitter.parsers").get_parser_configs()
 parser_configs.hcl = {
-    filetype = "hcl", "terraform",
+    filetype = { "hcl", "terraform", "tf" },
 }
 
 
@@ -87,13 +90,14 @@ require("lvim.lsp.manager").setup("terraformls", {
 -- -- set a formatter, this will override the language server formatting capabilities (if it exists)
 local formatters = require "lvim.lsp.null-ls.formatters"
 formatters.setup {
+    { command = "terraform_fmt" },
 }
 
 -- -- set additional linters
 local linters = require "lvim.lsp.null-ls.linters"
 linters.setup {
     -- go
-    { name = "golangci_lint" },
+    -- { name = "golangci_lint" },
 
     -- php
     { name = "php" },
@@ -108,6 +112,9 @@ lvim.plugins = {
     { "tpope/vim-abolish" },
     { "nelsyeung/twig.vim" },
     { "folke/trouble.nvim" },
+    { "kdheepak/lazygit.nvim" },
+    { "lunarvim/colorschemes" },
+    { "Yazeed1s/minimal.nvim" },
     {
         "ray-x/lsp_signature.nvim",
         config = function() require "lsp_signature".on_attach({ toggle_key = '<C-x>' }) end,
