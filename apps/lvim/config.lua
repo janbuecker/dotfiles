@@ -27,6 +27,17 @@ lvim.builtin.which_key.mappings["x"] = {
     q = { "<cmd>Trouble quickfix<cr>", "QuickFix" },
     l = { "<cmd>Trouble loclist<cr>", "LocationList" },
     w = { "<cmd>Trouble workspace_diagnostics<cr>", "Wordspace Diagnostics" },
+    x = { "<cmd>TroubleToggle<cr>", "Toggle" },
+}
+lvim.builtin.which_key.mappings["gR"] = { "<cmd>TroubleToggle lsp_references<cr>", "LSP references [Trouble]" }
+
+lvim.builtin.which_key.mappings["t"] = {
+    name = "+Test",
+    t = { "<cmd>TestNearest<cr>", "Nearest" },
+    T = { "<cmd>TestFile<cr>", "File" },
+    a = { "<cmd>TestSuite<cr>", "Suite" },
+    l = { "<cmd>TestLast<cr>", "Last" },
+    g = { "<cmd>TestVisit<cr>", "Visit" },
 }
 
 -- After changing plugin config exit and reopen LunarVim, Run :PackerInstall :PackerCompile
@@ -64,25 +75,10 @@ parser_configs.hcl = {
     filetype = { "hcl", "terraform", "tf" },
 }
 
-
 -- ---@usage disable automatic installation of servers
 lvim.lsp.automatic_servers_installation = true
 
 -- ---configure a server manually. !!Requires `:LvimCacheReset` to take effect!!
--- ---see the full default list `:lua print(vim.inspect(lvim.lsp.automatic_configuration.skipped_servers))`
--- vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "pyright" })
--- local opts = {} -- check the lspconfig documentation for a list of all possible options
--- require("lvim.lsp.manager").setup("pyright", opts)
-
--- -- you can set a custom on_attach function that will be used for all the language servers
--- -- See <https://github.com/neovim/nvim-lspconfig#keybindings-and-completion>
--- lvim.lsp.on_attach_callback = function(client, bufnr)
---   local function buf_set_option(...)
---     vim.api.nvim_buf_set_option(bufnr, ...)
---   end
---   --Enable completion triggered by <c-x><c-o>
---   buf_set_option("omnifunc", "v:lua.vim.lsp.omnifunc")
--- end
 require("lvim.lsp.manager").setup("terraformls", {
     filetype = { "terraform", "tf" },
 })
@@ -111,31 +107,20 @@ lvim.plugins = {
     { "farmergreg/vim-lastplace" },
     { "tpope/vim-abolish" },
     { "nelsyeung/twig.vim" },
-    { "folke/trouble.nvim" },
+    {
+        "folke/trouble.nvim",
+        config = function()
+            require("trouble").setup {}
+        end,
+    },
     { "kdheepak/lazygit.nvim" },
     { "lunarvim/colorschemes" },
-    { "Yazeed1s/minimal.nvim" },
     {
         "ray-x/lsp_signature.nvim",
         config = function() require "lsp_signature".on_attach({ toggle_key = '<C-x>' }) end,
         event = "BufRead"
     },
 }
-
-lvim.builtin.which_key.mappings["t"] = {
-    name = "+Test",
-    t = { "<cmd>TestNearest<cr>", "Nearest" },
-    T = { "<cmd>TestFile<cr>", "File" },
-    a = { "<cmd>TestSuite<cr>", "Suite" },
-    l = { "<cmd>TestLast<cr>", "Last" },
-    g = { "<cmd>TestVisit<cr>", "Visit" },
-}
-
--- Show LSP signature while typing
--- vim.api.nvim_create_autocmd("CursorHoldI", {
---     pattern = { "*.*" },
---     command = "lua vim.lsp.buf.signature_help()",
--- })
 
 -- Go: auto-import on save
 vim.api.nvim_create_autocmd("BufWritePre", {

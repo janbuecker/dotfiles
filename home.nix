@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 let
   unstable = import <unstable> { config = { allowUnfree = true; }; };
-  php = pkgs.php80.buildEnv { extraConfig = "memory_limit = 2G"; };
+  php = pkgs.php81.buildEnv { extraConfig = "memory_limit = 2G"; };
 in
 {
   home.username = "jbuecker";
