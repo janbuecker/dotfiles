@@ -148,3 +148,8 @@ vim.api.nvim_create_autocmd("BufWritePre", {
         end
     end,
 })
+
+-- fix for <cr>
+-- see https://github.com/LunarVim/LunarVim/issues/2543
+local cmp = require("cmp")
+lvim.builtin.cmp.mapping['<CR>'] = cmp.mapping.preset.insert(cmp.mapping.confirm({ select = true }))
