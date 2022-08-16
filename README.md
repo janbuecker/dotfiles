@@ -8,6 +8,7 @@ This repository contains my workstation configuration and can be restored using 
 sh <(curl -L https://nixos.org/nix/install)
 
 nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
+nix-channel --add https://nixos.org/channels/nixos-unstable unstable
 nix-channel --update
 
 # if not on NixOS
@@ -31,16 +32,7 @@ Run home-manager for the first time with this configuration
 home-manager switch
 ```
 
-### 4. Update the default shell to zsh
-
-```bash
-command -v zsh | sudo tee -a /etc/shells
-chsh -s $(which zsh)
-```
-
-Re-login to enter zsh.
-
-### 5. Decrypt secrets
+### 4. Decrypt secrets
 
 The de/encryption requires GPG, which should be installed by now
 

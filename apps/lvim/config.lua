@@ -1,10 +1,12 @@
+-- require 'nvim-treesitter.install'.compilers = { "gcc" }
+
 -- colorscheme
 vim.g.tokyonight_style = "night"
 
 -- general
 lvim.log.level = "warn"
 lvim.format_on_save = true
-lvim.colorscheme = "tokyonight"
+-- lvim.colorscheme = "tokyonight"
 lvim.colorscheme = "onedarker"
 
 vim.o.tabstop = 4 -- Insert 4 spaces for a tab
