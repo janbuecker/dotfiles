@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 let
   unstable = import <unstable> { config = { allowUnfree = true; }; };
-  php = pkgs.php81.buildEnv { extraConfig = "memory_limit = 2G"; };
+  php = pkgs.php81.buildEnv { extraConfig = "memory_limit = 4G"; };
 in
 {
   home.username = "jbuecker";
@@ -17,7 +17,10 @@ in
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  home.packages = with pkgs; [ 
+  home.packages = with pkgs; [
+    rbw
+    caddy
+    pinentry_mac
     gcc
     tmux
     coreutils
@@ -63,6 +66,10 @@ in
     tldr
     tfswitch
     lazygit
+    rustc
+    rust-analyzer
+    rustfmt
+    cargo
   ];
 
   programs.direnv = {
@@ -76,8 +83,8 @@ in
   };
 
   programs.bottom = {
-      enable = true;
-    };
+    enable = true;
+  };
 
   programs.go = {
     enable = true;
@@ -121,23 +128,23 @@ in
 
     ignores = [
       ".DS_Store"
-        ".AppleDouble"
-        ".LSOverride"
+      ".AppleDouble"
+      ".LSOverride"
 
-        "._*"
+      "._*"
 
-        ".DocumentRevisions-V100"
-        ".fseventsd"
-        ".Spotlight-V100"
-        ".TemporaryItems"
-        ".Trashes"
-        ".VolumeIcon.icns"
-        ".com.apple.timemachine.donotpresent"
-        ".AppleDB"
-        ".AppleDesktop"
-        "Network Trash Folder"
-        "Temporary Items"
-        ".apdisk"
+      ".DocumentRevisions-V100"
+      ".fseventsd"
+      ".Spotlight-V100"
+      ".TemporaryItems"
+      ".Trashes"
+      ".VolumeIcon.icns"
+      ".com.apple.timemachine.donotpresent"
+      ".AppleDB"
+      ".AppleDesktop"
+      "Network Trash Folder"
+      "Temporary Items"
+      ".apdisk"
     ];
   };
 
@@ -146,13 +153,15 @@ in
     enableCompletion = false;
     oh-my-zsh = {
       enable = true;
-      plugins = ["git" "docker" "docker-compose" "aws"];
+      plugins = [ "git" "docker" "docker-compose" "aws" ];
     };
     localVariables = {
-      PATH = "$PATH:/usr/local/bin:$GOPATH/bin:$HOME/.local/bin:$HOME/Library/Python/3.8/bin:$HOME/bin"; # fix for pip deps
+      PATH = "$PATH:/usr/local/bin:$GOPATH/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/Library/Python/3.8/bin:$HOME/bin";
     };
     sessionVariables = {
       DOCKER_BUILDKIT = 1;
+      RUSTFLAGS = "-L /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib";
+      RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
     };
     shellAliases = {
       # pbcopy = "xsel --clipboard --input"; # linux only
@@ -189,7 +198,7 @@ in
     ".gnupg/gpg-agent.conf".source = config.lib.file.mkOutOfStoreSymlink ./apps/gnupg/gpg-agent.conf;
     ".config/lvim/config.lua".source = config.lib.file.mkOutOfStoreSymlink ./apps/lvim/config.lua;
 
-# secrets
+    # secrets
     ".aws/config".source = config.lib.file.mkOutOfStoreSymlink ./secrets/aws/config;
     ".aws/credentials".source = config.lib.file.mkOutOfStoreSymlink ./secrets/aws/credentials;
     ".ssh/cloud".source = config.lib.file.mkOutOfStoreSymlink ./secrets/ssh/cloud;

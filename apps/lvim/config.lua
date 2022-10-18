@@ -1,21 +1,28 @@
--- require 'nvim-treesitter.install'.compilers = { "gcc" }
-
--- colorscheme
-vim.g.tokyonight_style = "night"
-
 -- general
-lvim.log.level = "warn"
-lvim.format_on_save = true
--- lvim.colorscheme = "tokyonight"
-lvim.colorscheme = "onedarker"
+lvim.colorscheme = "tokyonight"
+lvim.leader = "space"
+lvim.builtin.alpha.active = true
+lvim.builtin.notify.active = true
+lvim.builtin.terminal.active = true
+-- lvim.builtin.nvimtree.setup.view.side = "left"
+-- lvim.builtin.nvimtree.setup.actions.open_file.resize_window = true
 
+-- indentation
 vim.o.tabstop = 4 -- Insert 4 spaces for a tab
 vim.o.shiftwidth = 4 -- Change the number of space characters inserted for indentation
 vim.o.expandtab = true -- Converts tabs to spaces
+vim.opt.colorcolumn = "120"
 
-lvim.leader = "space"
+-- treesitter
+lvim.builtin.treesitter.ensure_installed = "all"
+lvim.builtin.treesitter.ignore_install = { "haskell" }
+lvim.builtin.treesitter.highlight.enabled = true
 
-lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
+-- LSP
+lvim.lsp.automatic_servers_installation = false
+vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "pyright", "clangd", "intelephense" })
+
+-- keybindings
 lvim.keys.normal_mode["<C-e>"] = ":Telescope oldfiles<cr>"
 
 lvim.builtin.which_key.mappings["sf"] = { "<cmd>Telescope find_files no_ignore=true<cr>", "Find File" }
@@ -31,7 +38,7 @@ lvim.builtin.which_key.mappings["x"] = {
     w = { "<cmd>Trouble workspace_diagnostics<cr>", "Wordspace Diagnostics" },
     x = { "<cmd>TroubleToggle<cr>", "Toggle" },
 }
-lvim.builtin.which_key.mappings["gR"] = { "<cmd>TroubleToggle lsp_references<cr>", "LSP references [Trouble]" }
+lvim.builtin.which_key.mappings["lR"] = { "<cmd>TroubleToggle lsp_references<cr>", "LSP references [Trouble]" }
 
 lvim.builtin.which_key.mappings["t"] = {
     name = "+Test",
@@ -41,44 +48,16 @@ lvim.builtin.which_key.mappings["t"] = {
     l = { "<cmd>TestLast<cr>", "Last" },
     g = { "<cmd>TestVisit<cr>", "Visit" },
 }
-
--- After changing plugin config exit and reopen LunarVim, Run :PackerInstall :PackerCompile
-lvim.builtin.alpha.active = true
-lvim.builtin.alpha.mode = "dashboard"
-lvim.builtin.notify.active = true
-lvim.builtin.terminal.active = true
-lvim.builtin.nvimtree.setup.view.side = "left"
-lvim.builtin.nvimtree.setup.actions.open_file.resize_window = true
-
--- if you don't want all the parsers change this to a table of the ones you want
-lvim.builtin.treesitter.ensure_installed = {
-    "bash",
-    "c",
-    "javascript",
-    "json",
-    "lua",
-    "python",
-    "typescript",
-    "tsx",
-    "css",
-    "rust",
-    "java",
-    "yaml",
-    "php",
-    "go",
-    "hcl",
+lvim.builtin.which_key.mappings["n"] = {
+    name = "+Notes",
+    n = { function() return require('arachne').new() end, "New" },
+    r = { function() return require('arachne').rename() end, "Rename" },
+    f = { function() require('telescope.builtin').find_files {
+            prompt_title = '<notes::files>',
+            cwd = '~/notes'
+        }
+    end, "Find notes" }
 }
-
-lvim.builtin.treesitter.ignore_install = { "haskell" }
-lvim.builtin.treesitter.highlight.enabled = true
-
-local parser_configs = require("nvim-treesitter.parsers").get_parser_configs()
-parser_configs.hcl = {
-    filetype = { "hcl", "terraform", "tf" },
-}
-
--- ---@usage disable automatic installation of servers
-lvim.lsp.automatic_servers_installation = true
 
 -- ---configure a server manually. !!Requires `:LvimCacheReset` to take effect!!
 require("lvim.lsp.manager").setup("terraformls", {
@@ -88,23 +67,26 @@ require("lvim.lsp.manager").setup("terraformls", {
 -- -- set a formatter, this will override the language server formatting capabilities (if it exists)
 local formatters = require "lvim.lsp.null-ls.formatters"
 formatters.setup {
-    { command = "terraform_fmt" },
+    { command = "phpcsfixer" },
+    { command = "buf" },
 }
 
 -- -- set additional linters
 local linters = require "lvim.lsp.null-ls.linters"
 linters.setup {
     -- go
-    -- { name = "golangci_lint" },
+    { name = "golangci_lint" },
 
     -- php
     { name = "php" },
     { name = "phpstan" },
+
+    -- proto
+    { name = "buf" },
 }
 
 -- Additional Plugins
 lvim.plugins = {
-    { "folke/tokyonight.nvim" },
     { "vim-test/vim-test" },
     { "farmergreg/vim-lastplace" },
     { "tpope/vim-abolish" },
@@ -116,11 +98,33 @@ lvim.plugins = {
         end,
     },
     { "kdheepak/lazygit.nvim" },
-    { "lunarvim/colorschemes" },
     {
         "ray-x/lsp_signature.nvim",
         config = function() require "lsp_signature".on_attach({ toggle_key = '<C-x>' }) end,
         event = "BufRead"
+    },
+    { "jacoborus/tender.vim" },
+    { "Mofiqul/dracula.nvim" },
+    { "folke/lsp-colors.nvim" },
+    { "f-person/git-blame.nvim" },
+    {
+        "phpactor/phpactor",
+        run = "composer install --no-dev -o",
+        config = function()
+            require 'lspconfig'.phpactor.setup {
+                init_options = {
+                    ["language_server_phpstan.enabled"] = false,
+                    ["language_server_psalm.enabled"] = false,
+                    ["language_server_php_cs_fixer.enabled"] = true,
+                }
+            }
+        end
+    },
+    {
+        'oem/arachne.nvim',
+        config = function()
+            require('arachne').setup { notes_directory = "/Users/jbuecker/notes" }
+        end
     },
 }
 
@@ -128,7 +132,7 @@ lvim.plugins = {
 vim.api.nvim_create_autocmd("BufWritePre", {
     pattern = { "*.go" },
     callback = function()
-        vim.lsp.buf.formatting_sync(nil, 3000)
+        vim.lsp.buf.format({ timeout_ms = 3000 })
     end,
 })
 
@@ -150,8 +154,3 @@ vim.api.nvim_create_autocmd("BufWritePre", {
         end
     end,
 })
-
--- fix for <cr>
--- see https://github.com/LunarVim/LunarVim/issues/2543
-local cmp = require("cmp")
-lvim.builtin.cmp.mapping['<CR>'] = cmp.mapping.preset.insert(cmp.mapping.confirm({ select = true }))
