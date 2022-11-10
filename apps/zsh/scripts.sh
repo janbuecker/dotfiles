@@ -30,3 +30,9 @@ ecr() {
         --username AWS \
         "$(aws sts get-caller-identity --query Account --output text).dkr.ecr.$region.amazonaws.com"
 }
+
+mfa() {
+    _code=$(ykman oath accounts code | fzf -1 -q "$1" | awk '{print $NF}')
+    echo -n $_code
+    echo $_code | pbcopy
+}

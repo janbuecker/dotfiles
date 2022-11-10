@@ -18,10 +18,8 @@ in
   nixpkgs.config.allowUnfree = true;
 
   home.packages = with pkgs; [
-    rbw
     caddy
     pinentry_mac
-    gcc
     tmux
     coreutils
     gnused
@@ -43,7 +41,7 @@ in
     glab
     docker-compose
     gnupg
-    temporal-cli
+    unstable.temporal-cli
     xsel
     fzf
     fd
@@ -59,9 +57,7 @@ in
     unstable.neovim
     natscli
     nodejs
-    dogdns
     bandwhich
-    gping
     rm-improved
     tldr
     tfswitch
@@ -70,6 +66,7 @@ in
     rust-analyzer
     rustfmt
     cargo
+    yubikey-manager
   ];
 
   programs.direnv = {
@@ -153,10 +150,10 @@ in
     enableCompletion = false;
     oh-my-zsh = {
       enable = true;
-      plugins = [ "git" "docker" "docker-compose" "aws" ];
+      plugins = [ "git" "docker" "aws" ];
     };
     localVariables = {
-      PATH = "$PATH:/usr/local/bin:$GOPATH/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/Library/Python/3.8/bin:$HOME/bin";
+      PATH = "$PATH:/usr/local/bin:$GOPATH/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/Library/Python/3.9/bin:$HOME/bin";
     };
     sessionVariables = {
       DOCKER_BUILDKIT = 1;
@@ -165,15 +162,12 @@ in
     };
     shellAliases = {
       # pbcopy = "xsel --clipboard --input"; # linux only
-      open = "xdg-open";
+      # open = "xdg-open"; # linux only
+      # ykrestart = "gpgconf --reload scdaemon && gpgconf --kill gpg-agent && gpg-connect-agent updatestartuptty /bye"; # linux only
       adminer = "php -S 0.0.0.0:8080 $HOME/Downloads/adminer.php";
-      ykrestart = "gpgconf --reload scdaemon && gpgconf --kill gpg-agent && gpg-connect-agent updatestartuptty /bye";
       awsume = ". awsume";
       hm = "home-manager";
-      vi = "lvim";
       vim = "lvim";
-      dig = "dog";
-      ping = "gping";
       tmux = "tmux -u";
       lg = "lazygit";
     };
