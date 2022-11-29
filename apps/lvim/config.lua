@@ -43,6 +43,15 @@ lvim.keys.normal_mode["<C-e>"] = ":Telescope oldfiles<cr>"
 lvim.keys.normal_mode["<leader>d"] = "\"_d"
 lvim.keys.visual_mode["<leader>d"] = "\"_d"
 
+-- theprimeagen <3
+lvim.keys.normal_mode["<C-u>"] = "<C-u>zz"
+lvim.keys.normal_mode["<C-d>"] = "<C-d>zz"
+lvim.keys.normal_mode["n"] = "nzz"
+
+-- test setup
+vim.g["test#go#gotest#options"] = "-v -coverprofile coverage.out"
+vim.g["test#strategy"] = "neovim"
+
 lvim.builtin.which_key.mappings["sf"] = { "<cmd>Telescope find_files no_ignore=true<cr>", "Find File" }
 lvim.builtin.which_key.mappings["gg"] = { "<cmd>LazyGit<CR>", "LazyGit" }
 lvim.builtin.which_key.mappings["P"] = { "<cmd>Telescope projects<CR>", "Projects" }
@@ -65,25 +74,22 @@ lvim.builtin.which_key.mappings["t"] = {
     a = { "<cmd>TestSuite<cr>", "Suite" },
     l = { "<cmd>TestLast<cr>", "Last" },
     g = { "<cmd>TestVisit<cr>", "Visit" },
-}
-lvim.builtin.which_key.mappings["n"] = {
-    name = "+Notes",
-    n = { function() return require('arachne').new() end, "New" },
-    r = { function() return require('arachne').rename() end, "Rename" },
-    f = { function() require('telescope.builtin').find_files {
-            prompt_title = '<notes::files>',
-            cwd = '~/notes'
-        }
-    end, "Find notes" }
+    c = {
+        name = "+Coverage",
+        l = {"<cmd>Coverage<cr>", "Load coverage"},
+        c = {"<cmd>CoverageClear<cr>", "Clear"},
+        t = {"<cmd>CoverageToggle<cr>", "Toggle"},
+        s = {"<cmd>CoverageSummary<cr>", "Summary"},
+    }
 }
 
 -- ---configure a server manually. !!Requires `:LvimCacheReset` to take effect!!
 local lsp_manager = require "lvim.lsp.manager"
 lsp_manager.setup("terraformls", { filetype = { "terraform", "tf" }, })
-lsp_manager.setup("golangci_lint_ls", {
-    on_init = require("lvim.lsp").common_on_init,
-    capabilities = require("lvim.lsp").common_capabilities(),
-})
+-- lsp_manager.setup("golangci_lint_ls", {
+--     on_init = require("lvim.lsp").common_on_init,
+--     capabilities = require("lvim.lsp").common_capabilities(),
+-- })
 lsp_manager.setup("gopls", {
     on_attach = function(client, bufnr)
         require("lvim.lsp").common_on_attach(client, bufnr)
@@ -118,37 +124,10 @@ lsp_manager.setup("gopls", {
     },
 })
 
-lvim.builtin.which_key.mappings["C"] = {
-    name = "Go",
-    i = { "<cmd>GoInstallDeps<Cr>", "Go install deps" },
-    t = { "<cmd>GoMod tidy<cr>", "Tidy" },
-    a = { "<cmd>GoTestAdd<Cr>", "Add Test" },
-    A = { "<cmd>GoTestsAll<Cr>", "Add all Tests" },
-    e = { "<cmd>GoTestsExp<Cr>", "Add exported tests" },
-    g = { "<cmd>GoGenerate<Cr>", "Go Generate" },
-    f = { "<cmd>GoGenerate %%<Cr>", "Go Generate FIle" },
-    c = { "<cmd>GoCmt<Cr>", "Generate Comment", },
-    DT = { "<cmd>lua require('dap-go').debug_test()<cr>", "Debug test" },
-}
-
-local status_ok, gopher = pcall(require, "gopher")
-if not status_ok then
-    return
-end
-
-gopher.setup {
-    commands = {
-        go = "go",
-        gomodifytags = "gomodifytags",
-        gotests = "gotests",
-        impl = "impl",
-        iferr = "iferr",
-    },
-}
-
--- -- set a formatter, this will override the language server formatting capabilities (if it exists)
+-- set a formatter, this will override the language server formatting capabilities (if it exists)
 local formatters = require "lvim.lsp.null-ls.formatters"
 formatters.setup {
+    { command = "shfmt" },
     { command = "phpcsfixer" },
     { command = "buf" },
     { command = "sqlfluff", args = { "--dialect", "postgres" } },
@@ -213,15 +192,12 @@ lvim.plugins = {
         end
     },
     {
-        'oem/arachne.nvim',
+        "andythigpen/nvim-coverage",
+        requires = "nvim-lua/plenary.nvim",
         config = function()
-            require('arachne').setup { notes_directory = "/Users/jbuecker/notes" }
-        end
+            require("coverage").setup()
+        end,
     },
-
-    -- go starter
-    { "olexsmir/gopher.nvim" },
-    { "leoluz/nvim-dap-go" },
 }
 
 -- Go: auto-import on save
@@ -251,10 +227,3 @@ vim.api.nvim_create_autocmd("BufWritePre", {
     end,
 })
 
--- go starter
-local dap_ok, dapgo = pcall(require, "dap-go")
-if not dap_ok then
-    return
-end
-
-dapgo.setup()
