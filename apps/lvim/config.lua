@@ -36,7 +36,6 @@ lvim.builtin.telescope.pickers.live_grep = {
 lvim.builtin.telescope.pickers.find_files.path_display = { "truncate" }
 lvim.builtin.telescope.pickers.git_files.path_display = { "truncate" }
 lvim.builtin.which_key.mappings["r"] = { "<cmd>Telescope resume<CR>", "Telescope Resume", }
-lvim.builtin.which_key.mappings["b"] = { "<cmd>Telescope buffers<CR>", "List Buffers", }
 
 -- keybindings
 lvim.keys.normal_mode["<C-e>"] = ":Telescope oldfiles<cr>"
@@ -53,8 +52,8 @@ vim.g["test#go#gotest#options"] = "-v -coverprofile coverage.out"
 vim.g["test#strategy"] = "neovim"
 
 lvim.builtin.which_key.mappings["sf"] = { "<cmd>Telescope find_files no_ignore=true<cr>", "Find File" }
-lvim.builtin.which_key.mappings["gg"] = { "<cmd>LazyGit<CR>", "LazyGit" }
 lvim.builtin.which_key.mappings["P"] = { "<cmd>Telescope projects<CR>", "Projects" }
+lvim.builtin.which_key.mappings["c"] = { "<cmd>bd!<CR>", "Close Buffer" }
 lvim.builtin.which_key.mappings["x"] = {
     name = "+Trouble",
     r = { "<cmd>Trouble lsp_references<cr>", "References" },
@@ -76,10 +75,10 @@ lvim.builtin.which_key.mappings["t"] = {
     g = { "<cmd>TestVisit<cr>", "Visit" },
     c = {
         name = "+Coverage",
-        l = {"<cmd>Coverage<cr>", "Load coverage"},
-        c = {"<cmd>CoverageClear<cr>", "Clear"},
-        t = {"<cmd>CoverageToggle<cr>", "Toggle"},
-        s = {"<cmd>CoverageSummary<cr>", "Summary"},
+        l = { "<cmd>Coverage<cr>", "Load coverage" },
+        c = { "<cmd>CoverageClear<cr>", "Clear" },
+        t = { "<cmd>CoverageToggle<cr>", "Toggle" },
+        s = { "<cmd>CoverageSummary<cr>", "Summary" },
     }
 }
 
@@ -162,13 +161,11 @@ lvim.plugins = {
             require("trouble").setup {}
         end,
     },
-    { "kdheepak/lazygit.nvim" },
     {
         "ray-x/lsp_signature.nvim",
         config = function() require "lsp_signature".on_attach({ toggle_key = '<C-x>' }) end,
         event = "BufRead"
     },
-    { "jacoborus/tender.vim" },
     { "folke/lsp-colors.nvim" },
     { "f-person/git-blame.nvim" },
     { "rebelot/kanagawa.nvim" },
@@ -198,6 +195,12 @@ lvim.plugins = {
             require("coverage").setup()
         end,
     },
+    {
+        "nvim-treesitter/nvim-treesitter-context",
+        config = function()
+            require 'treesitter-context'.setup {}
+        end,
+    }
 }
 
 -- Go: auto-import on save
@@ -226,4 +229,3 @@ vim.api.nvim_create_autocmd("BufWritePre", {
         end
     end,
 })
-
