@@ -8,7 +8,7 @@ in
   home.homeDirectory = "/Users/jbuecker";
   home.stateVersion = "22.05";
   home.sessionVariables = {
-    EDITOR = "lvim";
+    EDITOR = "nvim";
   };
 
   # Let Home Manager install and manage itself.
@@ -67,6 +67,7 @@ in
     rustfmt
     cargo
     yubikey-manager
+    bat
   ];
 
   programs.direnv = {
@@ -159,6 +160,8 @@ in
       DOCKER_BUILDKIT = 1;
       RUSTFLAGS = "-L /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib";
       RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
+      XDG_CONFIG_HOME = "$HOME/.config";
+      MANPAGER = "nvim +Man!";
     };
     shellAliases = {
       # pbcopy = "xsel --clipboard --input"; # linux only
@@ -167,22 +170,28 @@ in
       adminer = "php -S 0.0.0.0:8080 $HOME/Downloads/adminer.php";
       awsume = ". awsume";
       hm = "home-manager";
-      vim = "lvim";
+      vim = "nvim";
       tmux = "tmux -u";
       lg = "lazygit";
+      cat = "bat -pp --theme \"Visual Studio Dark+\"";
+      catt = "bat --theme \"Visual Studio Dark+\"";
+      cp = "cp -i";
+      mv = "mv -i";
+      rm = "rm -i";
+
     };
     initExtra = ''
-      # custom console theme
-      source $HOME/.oh-my-zsh/custom/themes/honukai.zsh-theme
+            # custom console theme
+            source $HOME/.oh-my-zsh/custom/themes/honukai.zsh-theme
 
-      # Yubikey setup
-      export GIT_SSH="/usr/bin/ssh"
-      export GPG_TTY="$(tty)"
-      export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
-      gpgconf --launch gpg-agent
+            # Yubikey setup
+            export GIT_SSH="/usr/bin/ssh"
+            export GPG_TTY="$(tty)"
+            export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+            gpgconf --launch gpg-agent
 
-      # custom scripts
-      ${builtins.readFile ./apps/zsh/scripts.sh}
+            # custom scripts
+            ${builtins.readFile ./apps/zsh/scripts.sh}
     '';
   };
 
@@ -191,6 +200,7 @@ in
     ".gnupg/pubkey.pub".source = config.lib.file.mkOutOfStoreSymlink ./apps/gnupg/pubkey.pub;
     ".gnupg/gpg-agent.conf".source = config.lib.file.mkOutOfStoreSymlink ./apps/gnupg/gpg-agent.conf;
     ".config/lvim/config.lua".source = config.lib.file.mkOutOfStoreSymlink ./apps/lvim/config.lua;
+    ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink ./apps/nvim;
 
     # secrets
     ".aws/config".source = config.lib.file.mkOutOfStoreSymlink ./secrets/aws/config;
