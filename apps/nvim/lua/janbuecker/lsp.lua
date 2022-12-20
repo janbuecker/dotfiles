@@ -55,7 +55,6 @@ end
 -- Setup mason so it can manage external tooling
 require('mason').setup()
 
-
 -- Ensure the servers above are installed
 require('mason-lspconfig').setup {
   ensure_installed = servers,
@@ -142,13 +141,25 @@ local lsp_settings = {
   gopls = {
     settings = {
       gopls = {
-        completeUnimported = true,
-        gofumpt = true,
         analyses = {
+          nilness = true,
           unusedparams = true,
+          unusedwrite = true,
+          useany = true
         },
-        staticcheck = true,
-      },
+        experimentalPostfixCompletions = true,
+        gofumpt = true,
+        usePlaceholders = true,
+        hints = {
+          assignVariableTypes = true,
+          compositeLiteralFields = true,
+          compositeLiteralTypes = true,
+          constantValues = true,
+          functionTypeParameters = true,
+          parameterNames = true,
+          rangeVariableTypes = true
+        }
+      }
     }
   },
 }
@@ -164,7 +175,5 @@ for _, lsp in ipairs(servers) do
   require('lspconfig')[lsp].setup(options)
 end
 
-
 -- Turn on lsp status information
 require('fidget').setup()
-

@@ -6,7 +6,7 @@ vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = tr
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
 -- Format
-vim.keymap.set('n', '<leader>F', ':Format<cr>', { desc = '[F]ormat file' })
+vim.keymap.set('n', '<leader>F', vim.lsp.buf.format, { desc = '[F]ormat file' })
 
 -- Center page on find/scroll
 vim.keymap.set("n", "n", "nzzzv")
@@ -36,4 +36,4 @@ vim.keymap.set("x", "<leader>p", [["_dP]])
 vim.keymap.set("i", "<C-c>", "<Esc>")
 
 -- Force close
-vim.keymap.set("n", "<leader>c", "<cmd>bd!<CR>", { desc = "Close Buffer" })
+vim.keymap.set("n", "<leader>x", "<cmd>bd!<CR>", { desc = "Close Buffer" })

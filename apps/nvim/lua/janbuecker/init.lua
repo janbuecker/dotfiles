@@ -2,8 +2,9 @@ require('janbuecker.defaults')
 require('janbuecker.keymaps')
 
 require('janbuecker.plugins')
+require('janbuecker.lsp')
+require('janbuecker.null-ls')
 require('janbuecker.telescope')
-require('janbuecker.lualine')
 require('janbuecker.lualine')
 require('janbuecker.gitsigns')
 require('janbuecker.illuminate')
@@ -16,7 +17,6 @@ require('janbuecker.nvimtree')
 require('janbuecker.autopairs')
 require('janbuecker.project')
 require('janbuecker.lazygit')
-require('janbuecker.lsp')
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -69,7 +69,7 @@ vim.cmd [[
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
--- vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
+vim.keymap.set('n', 'gl', vim.diagnostic.open_float)
 -- vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 
 -- The line beneath this is called `modeline`. See `:help modeline`

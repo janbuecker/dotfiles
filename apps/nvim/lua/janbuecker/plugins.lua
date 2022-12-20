@@ -40,6 +40,8 @@ require('packer').startup(function(use)
     after = 'nvim-treesitter',
   }
 
+  use 'jose-elias-alvarez/null-ls.nvim'
+
   -- Git related plugins
   use 'lewis6991/gitsigns.nvim'
 

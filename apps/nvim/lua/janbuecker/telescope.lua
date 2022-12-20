@@ -16,7 +16,7 @@ pcall(require('telescope').load_extension, 'fzf')
 
 -- [[ Telescope ]]
 -- See `:help telescope.builtin`
-vim.keymap.set('n', '<C>e', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
+vim.keymap.set('n', '<C-e>', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
 vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
 
 vim.keymap.set('n', '<leader>f', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
