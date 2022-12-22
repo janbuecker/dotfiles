@@ -75,6 +75,7 @@ in
     cargo
     yubikey-manager
     bat
+    postgresql
   ];
 
   programs.direnv = {
@@ -199,6 +200,9 @@ in
 
             # custom scripts
             ${builtins.readFile ./apps/zsh/scripts.sh}
+
+            # custom secret scripts
+            ${builtins.readFile ./secrets/zsh/scripts.sh}
     '';
   };
 
