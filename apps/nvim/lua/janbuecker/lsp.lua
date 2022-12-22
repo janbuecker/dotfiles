@@ -1,7 +1,6 @@
 -- Enable the following language servers
 -- Feel free to add/remove any LSPs that you want here. They will automatically be installed
-local servers = { 'gopls', 'rust_analyzer', 'phpactor', 'terraformls', 'sumneko_lua', 'tflint', 'yamlls', 'jsonls',
-  'html', 'bashls' }
+local servers = { 'gopls', 'rust_analyzer', 'terraformls', 'tflint', 'sumneko_lua', 'yamlls', 'jsonls', 'bashls', 'intelephense' }
 
 -- LSP settings.
 --  This function gets run when an LSP connects to a particular buffer.

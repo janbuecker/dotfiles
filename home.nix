@@ -17,6 +17,13 @@ in
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
+  # neovim nightly
+  nixpkgs.overlays = [
+    (import (builtins.fetchTarball {
+      url = https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz;
+    }))
+  ];
+
   home.packages = with pkgs; [
     caddy
     pinentry_mac
@@ -54,7 +61,7 @@ in
     direnv
     wireguard-tools
     wireguard-go
-    unstable.neovim
+    neovim-nightly
     natscli
     nodejs
     bandwhich
@@ -203,6 +210,7 @@ in
     ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink ./apps/nvim;
 
     # secrets
+    "intelephense/licence.txt".source = config.lib.file.mkOutOfStoreSymlink ./secrets/intelephense.txt;
     ".aws/config".source = config.lib.file.mkOutOfStoreSymlink ./secrets/aws/config;
     ".aws/credentials".source = config.lib.file.mkOutOfStoreSymlink ./secrets/aws/credentials;
     ".ssh/cloud".source = config.lib.file.mkOutOfStoreSymlink ./secrets/ssh/cloud;

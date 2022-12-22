@@ -8,7 +8,51 @@ require('telescope').setup {
         ['<C-d>'] = false,
       },
     },
+    winblend = 0,
+
+    layout_strategy = "horizontal",
+    layout_config = {
+      width = 0.95,
+      height = 0.85,
+      -- preview_cutoff = 120,
+      prompt_position = "bottom",
+
+      horizontal = {
+        preview_width = function(_, cols, _)
+          if cols > 200 then
+            return math.floor(cols * 0.4)
+          else
+            return math.floor(cols * 0.6)
+          end
+        end,
+      },
+
+      vertical = {
+        width = 0.9,
+        height = 0.95,
+        preview_height = 0.5,
+      },
+
+      flex = {
+        horizontal = {
+          preview_width = 0.9,
+        },
+      },
+    },
+
+    selection_strategy = "reset",
+    sorting_strategy = "descending",
+    scroll_strategy = "cycle",
   },
+
+  extensions = {
+    fzf = {
+      fuzzy = true,                    -- false will only do exact matching
+      override_generic_sorter = true,  -- override the generic sorter
+      override_file_sorter = true,     -- override the file sorter
+      case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
+    }
+  }
 }
 
 -- Enable telescope fzf native, if installed
