@@ -1,2 +1,0 @@
--- illuminate
-require('illuminate').configure()
