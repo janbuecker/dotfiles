@@ -76,6 +76,7 @@ in
     yubikey-manager
     bat
     postgresql
+    mysql80
   ];
 
   programs.direnv = {
