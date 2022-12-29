@@ -187,7 +187,7 @@ in
       cp = "cp -i";
       mv = "mv -i";
       rm = "rm -i";
-
+      ssh = "kitty +kitten ssh";
     };
     initExtra = ''
             # custom console theme
@@ -213,6 +213,8 @@ in
     ".gnupg/gpg-agent.conf".source = config.lib.file.mkOutOfStoreSymlink ./apps/gnupg/gpg-agent.conf;
     ".config/lvim/config.lua".source = config.lib.file.mkOutOfStoreSymlink ./apps/lvim/config.lua;
     ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink ./apps/nvim;
+    ".config/kitty/kitty.conf".source = config.lib.file.mkOutOfStoreSymlink ./apps/kitty/kitty.conf;
+    ".config/kitty/kanagawa.conf".source = config.lib.file.mkOutOfStoreSymlink ./apps/kitty/kanagawa.conf;
 
     # secrets
     "intelephense/licence.txt".source = config.lib.file.mkOutOfStoreSymlink ./secrets/intelephense.txt;
