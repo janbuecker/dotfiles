@@ -2,14 +2,12 @@
 let
   unstable = import <unstable> { config = { allowUnfree = true; }; };
   php = pkgs.php81.buildEnv { extraConfig = "memory_limit = 4G"; };
-in
-{
+in {
   home.username = "jbuecker";
   home.homeDirectory = "/Users/jbuecker";
   home.stateVersion = "22.11";
-  home.sessionVariables = {
-    EDITOR = "nvim";
-  };
+  home.sessionVariables = { EDITOR = "nvim"; };
+  manual.manpages.enable = false;
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
@@ -18,13 +16,15 @@ in
   nixpkgs.config.allowUnfree = true;
 
   # neovim nightly
-  nixpkgs.overlays = [
-    (import (builtins.fetchTarball {
-      url = https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz;
-    }))
-  ];
+  # nixpkgs.overlays = [
+  #   (import (builtins.fetchTarball {
+  #     url = https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz;
+  #   }))
+  # ];
 
   home.packages = with pkgs; [
+    bash
+    unstable.awscli2
     caddy
     pinentry_mac
     tmux
@@ -52,16 +52,13 @@ in
     xsel
     fzf
     fd
-    zsh
-    oh-my-zsh
-    bitwarden-cli
     git-crypt
     jpegoptim
     unrar
     direnv
     wireguard-tools
     wireguard-go
-    neovim-nightly
+    neovim
     natscli
     nodejs
     bandwhich
@@ -77,7 +74,15 @@ in
     bat
     postgresql
     mysql80
+    nixfmt
+    shellcheck
   ];
+
+  home.activation = {
+    tfswitch = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      ${pkgs.tfswitch}/bin/tfswitch 1.3.6
+    '';
+  };
 
   programs.direnv = {
     enable = true;
@@ -89,9 +94,7 @@ in
     enableAliases = true;
   };
 
-  programs.bottom = {
-    enable = true;
-  };
+  programs.bottom = { enable = true; };
 
   programs.go = {
     enable = true;
@@ -102,9 +105,7 @@ in
 
   programs.gpg = {
     enable = true;
-    scdaemonSettings = {
-      disable-ccid = true;
-    };
+    scdaemonSettings = { disable-ccid = true; };
     publicKeys = [{
       source = ./apps/gnupg/pubkey.pub;
       trust = "ultimate";
@@ -160,14 +161,18 @@ in
     enableCompletion = false;
     oh-my-zsh = {
       enable = true;
+      # theme = "gnzh";
+      theme = "amuse";
       plugins = [ "git" "docker" "aws" ];
     };
     localVariables = {
-      PATH = "$PATH:/usr/local/bin:$GOPATH/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/Library/Python/3.9/bin:$HOME/bin";
+      PATH =
+        "$PATH:/usr/local/bin:$GOPATH/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/Library/Python/3.9/bin:$HOME/bin";
     };
     sessionVariables = {
       DOCKER_BUILDKIT = 1;
-      RUSTFLAGS = "-L /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib";
+      RUSTFLAGS =
+        "-L /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib";
       RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
       XDG_CONFIG_HOME = "$HOME/.config";
       MANPAGER = "nvim +Man!";
@@ -182,48 +187,62 @@ in
       vim = "nvim";
       tmux = "tmux -u";
       lg = "lazygit";
-      cat = "bat -pp --theme \"Visual Studio Dark+\"";
-      catt = "bat --theme \"Visual Studio Dark+\"";
+      cat = ''bat -pp --theme "Visual Studio Dark+"'';
+      catt = ''bat --theme "Visual Studio Dark+"'';
       cp = "cp -i";
       mv = "mv -i";
       rm = "rm -i";
-      ssh = "kitty +kitten ssh";
     };
     initExtra = ''
-            # custom console theme
-            source $HOME/.oh-my-zsh/custom/themes/honukai.zsh-theme
+      # custom console theme
+      # source $HOME/.oh-my-zsh/custom/themes/honukai.zsh-theme
 
-            # Yubikey setup
-            export GIT_SSH="/usr/bin/ssh"
-            export GPG_TTY="$(tty)"
-            export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
-            gpgconf --launch gpg-agent
+      # Yubikey setup
+      export GIT_SSH="/usr/bin/ssh"
+      export GPG_TTY="$(tty)"
+      export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+      gpgconf --launch gpg-agent
 
-            # custom scripts
-            ${builtins.readFile ./apps/zsh/scripts.sh}
+      # custom scripts
+      ${builtins.readFile ./apps/zsh/scripts.sh}
 
-            # custom secret scripts
-            ${builtins.readFile ./secrets/zsh/scripts.sh}
+      # custom secret scripts
+      ${builtins.readFile ./secrets/zsh/scripts.sh}
     '';
   };
 
   home.file = {
-    ".oh-my-zsh/custom/themes/honukai.zsh-theme".source = config.lib.file.mkOutOfStoreSymlink ./apps/oh-my-zsh/honukai.zsh-theme;
-    ".gnupg/pubkey.pub".source = config.lib.file.mkOutOfStoreSymlink ./apps/gnupg/pubkey.pub;
-    ".gnupg/gpg-agent.conf".source = config.lib.file.mkOutOfStoreSymlink ./apps/gnupg/gpg-agent.conf;
-    ".config/lvim/config.lua".source = config.lib.file.mkOutOfStoreSymlink ./apps/lvim/config.lua;
+    ".oh-my-zsh/custom/themes/honukai.zsh-theme".source =
+      config.lib.file.mkOutOfStoreSymlink ./apps/oh-my-zsh/honukai.zsh-theme;
+    ".gnupg/pubkey.pub".source =
+      config.lib.file.mkOutOfStoreSymlink ./apps/gnupg/pubkey.pub;
+    ".gnupg/gpg-agent.conf".source =
+      config.lib.file.mkOutOfStoreSymlink ./apps/gnupg/gpg-agent.conf;
+    ".config/lvim/config.lua".source =
+      config.lib.file.mkOutOfStoreSymlink ./apps/lvim/config.lua;
     ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink ./apps/nvim;
-    ".config/kitty/kitty.conf".source = config.lib.file.mkOutOfStoreSymlink ./apps/kitty/kitty.conf;
-    ".config/kitty/kanagawa.conf".source = config.lib.file.mkOutOfStoreSymlink ./apps/kitty/kanagawa.conf;
+    ".config/kitty/kitty.conf".source =
+      config.lib.file.mkOutOfStoreSymlink ./apps/kitty/kitty.conf;
+    ".config/kitty/kanagawa.conf".source =
+      config.lib.file.mkOutOfStoreSymlink ./apps/kitty/kanagawa.conf;
 
     # secrets
-    "intelephense/licence.txt".source = config.lib.file.mkOutOfStoreSymlink ./secrets/intelephense.txt;
-    ".aws/config".source = config.lib.file.mkOutOfStoreSymlink ./secrets/aws/config;
-    ".aws/credentials".source = config.lib.file.mkOutOfStoreSymlink ./secrets/aws/credentials;
-    ".ssh/cloud".source = config.lib.file.mkOutOfStoreSymlink ./secrets/ssh/cloud;
-    ".ssh/config".source = config.lib.file.mkOutOfStoreSymlink ./secrets/ssh/config;
+    "intelephense/licence.txt".source =
+      config.lib.file.mkOutOfStoreSymlink ./secrets/intelephense.txt;
+    ".aws/config".source =
+      config.lib.file.mkOutOfStoreSymlink ./secrets/aws/config;
+    ".aws/credentials".source =
+      config.lib.file.mkOutOfStoreSymlink ./secrets/aws/credentials;
+    ".ssh/cloud".source =
+      config.lib.file.mkOutOfStoreSymlink ./secrets/ssh/cloud;
+    ".ssh/config".source =
+      config.lib.file.mkOutOfStoreSymlink ./secrets/ssh/config;
     ".netrc".source = config.lib.file.mkOutOfStoreSymlink ./secrets/netrc;
-    ".config/wireguard/prod.private-key.gpg".source = config.lib.file.mkOutOfStoreSymlink ./secrets/wireguard/prod.private-key.gpg;
-    ".config/wireguard/staging.private-key.gpg".source = config.lib.file.mkOutOfStoreSymlink ./secrets/wireguard/staging.private-key.gpg;
+    ".config/wireguard/prod.private-key.gpg".source =
+      config.lib.file.mkOutOfStoreSymlink
+      ./secrets/wireguard/prod.private-key.gpg;
+    ".config/wireguard/staging.private-key.gpg".source =
+      config.lib.file.mkOutOfStoreSymlink
+      ./secrets/wireguard/staging.private-key.gpg;
   };
 }
