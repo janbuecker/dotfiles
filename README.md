@@ -37,5 +37,9 @@ home-manager switch
 The de/encryption requires GPG, which should be installed by now
 
 ```bash
+// with yubikey
 git-crypt unlock
+
+// with 1password
+op document get gitcrypt --force | git-crypt unlock -
 ```
