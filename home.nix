@@ -16,11 +16,12 @@ in {
   nixpkgs.config.allowUnfree = true;
 
   # neovim nightly
-  # nixpkgs.overlays = [
-  #   (import (builtins.fetchTarball {
-  #     url = https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz;
-  #   }))
-  # ];
+  nixpkgs.overlays = [
+    (import (builtins.fetchTarball {
+      url =
+        "https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz";
+    }))
+  ];
 
   home.packages = with pkgs; [
     bash
@@ -103,20 +104,13 @@ in {
     goPath = "opt/go";
   };
 
-  programs.gpg = {
-    enable = true;
-    scdaemonSettings = { disable-ccid = true; };
-    publicKeys = [{
-      source = ./apps/gnupg/pubkey.pub;
-      trust = "ultimate";
-    }];
-  };
-
   programs.git = {
     enable = true;
     package = unstable.git;
 
-    signing.key = "C87088800768BC0E";
+    # signing.key = "C87088800768BC0E";
+    signing.key =
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJlKV62/B496z2BR02s2HKI62QlDaPeXCbyDrs2TWODw";
     signing.signByDefault = true;
 
     userEmail = "j.buecker@shopware.com";
@@ -132,6 +126,13 @@ in {
       fetch.prune = true;
       init.defaultBranch = "main";
       push.autoSetupRemote = true;
+      gpg = {
+        format = "ssh";
+        ssh = {
+          program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
+          allowedSignersFile = "~/.ssh/allowed_signers";
+        };
+      };
     };
 
     ignores = [
@@ -194,14 +195,8 @@ in {
       rm = "rm -i";
     };
     initExtra = ''
-      # custom console theme
-      # source $HOME/.oh-my-zsh/custom/themes/honukai.zsh-theme
-
-      # Yubikey setup
-      export GIT_SSH="/usr/bin/ssh"
-      export GPG_TTY="$(tty)"
-      export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
-      gpgconf --launch gpg-agent
+      # 1password integration
+      # source ~/.config/op/plugins.sh
 
       # custom scripts
       ${builtins.readFile ./apps/zsh/scripts.sh}
@@ -212,8 +207,6 @@ in {
   };
 
   home.file = {
-    ".oh-my-zsh/custom/themes/honukai.zsh-theme".source =
-      config.lib.file.mkOutOfStoreSymlink ./apps/oh-my-zsh/honukai.zsh-theme;
     ".gnupg/pubkey.pub".source =
       config.lib.file.mkOutOfStoreSymlink ./apps/gnupg/pubkey.pub;
     ".gnupg/gpg-agent.conf".source =
@@ -225,6 +218,10 @@ in {
       config.lib.file.mkOutOfStoreSymlink ./apps/kitty/kitty.conf;
     ".config/kitty/kanagawa.conf".source =
       config.lib.file.mkOutOfStoreSymlink ./apps/kitty/kanagawa.conf;
+    ".ssh/allowed_signers".text = ''
+      j.buecker@shopware.com namespaces="git" ${
+        builtins.readFile ./apps/ssh/id_ed25519.pub
+      }'';
 
     # secrets
     "intelephense/licence.txt".source =
