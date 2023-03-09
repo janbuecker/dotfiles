@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 let
   unstable = import <unstable> { config = { allowUnfree = true; }; };
-  php = pkgs.php81.buildEnv { extraConfig = "memory_limit = 4G"; };
+  php = pkgs.php82.buildEnv { extraConfig = "memory_limit = 4G"; };
 in {
   home.username = "jbuecker";
   home.homeDirectory = "/Users/jbuecker";
@@ -16,67 +16,69 @@ in {
   nixpkgs.config.allowUnfree = true;
 
   # neovim nightly
-  nixpkgs.overlays = [
-    (import (builtins.fetchTarball {
-      url =
-        "https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz";
-    }))
-  ];
+  # nixpkgs.overlays = [
+  #   (import (builtins.fetchTarball {
+  #     url =
+  #       "https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz";
+  #   }))
+  # ];
 
   home.packages = with pkgs; [
+    awscli2
+    bandwhich
     bash
-    unstable.awscli2
+    bat
     caddy
-    pinentry_mac
-    tmux
+    cargo
+    qemu
+    # colima # wait for 0.5.4 for rosetta
     coreutils
-    gnused
-    gnugrep
-    findutils
-    ripgrep
-    wget
     curl
-    unzip
-    zip
+    direnv
+    docker
+    fd
+    findutils
+    fzf
+    git-crypt
+    glab
+    gnugrep
+    gnupg
+    gnused
     htop
+    jpegoptim
     jq
-    pigz
-    unstable.ssm-session-manager-plugin
+    lazygit
+    mysql80
+    natscli
+    neovim
+    nixfmt
+    nodejs
     php
     phpPackages.composer
-    phpPackages.psalm
     phpPackages.phpstan
-    glab
-    docker-compose
-    gnupg
-    unstable.temporal-cli
-    xsel
-    fzf
-    fd
-    git-crypt
-    jpegoptim
-    unrar
-    direnv
-    wireguard-tools
-    wireguard-go
-    neovim
-    natscli
-    nodejs
-    bandwhich
-    rm-improved
-    tldr
-    tfswitch
-    lazygit
-    rustc
-    rust-analyzer
-    rustfmt
-    cargo
-    yubikey-manager
-    bat
+    phpPackages.psalm
+    pigz
+    pinentry_mac
     postgresql
-    mysql80
-    nixfmt
+    ripgrep
+    rm-improved
+    rust-analyzer
+    rustc
+    rustfmt
     shellcheck
+    tfswitch
+    tldr
+    tmux
+    unrar
+    unstable.ssm-session-manager-plugin
+    unstable.temporal-cli
+    unzip
+    wget
+    wireguard-go
+    wireguard-tools
+    xsel
+    yubikey-manager
+    zip
   ];
 
   home.activation = {
@@ -99,7 +101,7 @@ in {
 
   programs.go = {
     enable = true;
-    package = unstable.go_1_19;
+    package = pkgs.go_1_20;
     goPrivate = [ "gitlab.shopware.com" ];
     goPath = "opt/go";
   };
@@ -168,7 +170,7 @@ in {
     };
     localVariables = {
       PATH =
-        "$PATH:/usr/local/bin:$GOPATH/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/Library/Python/3.9/bin:$HOME/bin";
+        "$PATH:/usr/local/bin:$GOPATH/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/Library/Python/3.9/bin:$HOME/bin:${pkgs.nodejs}/bin";
     };
     sessionVariables = {
       DOCKER_BUILDKIT = 1;
@@ -197,6 +199,7 @@ in {
     initExtra = ''
       # 1password integration
       # source ~/.config/op/plugins.sh
+      eval "$(op completion zsh)"; compdef _op op
 
       # custom scripts
       ${builtins.readFile ./apps/zsh/scripts.sh}
@@ -218,6 +221,8 @@ in {
       config.lib.file.mkOutOfStoreSymlink ./apps/kitty/kitty.conf;
     ".config/kitty/kanagawa.conf".source =
       config.lib.file.mkOutOfStoreSymlink ./apps/kitty/kanagawa.conf;
+    ".colima/_templates/default.yaml".source =
+      config.lib.file.mkOutOfStoreSymlink ./apps/colima/colima.yaml;
     ".ssh/allowed_signers".text = ''
       j.buecker@shopware.com namespaces="git" ${
         builtins.readFile ./apps/ssh/id_ed25519.pub
