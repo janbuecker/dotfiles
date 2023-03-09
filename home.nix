@@ -174,6 +174,7 @@ in {
     };
     sessionVariables = {
       DOCKER_BUILDKIT = 1;
+      DOCKER_HOST = "unix://$HOME/.colima/docker.sock";
       RUSTFLAGS =
         "-L /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib";
       RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
