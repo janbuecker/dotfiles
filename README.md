@@ -34,7 +34,7 @@ home-manager switch
 
 ### 4. Decrypt secrets
 
-The de/encryption requires GPG, which should be installed by now
+The de/encryption requires GPG or the unlock key.
 
 ```bash
 // with yubikey
