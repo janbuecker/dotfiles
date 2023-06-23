@@ -2,6 +2,7 @@
 let
   unstable = import <unstable> { config = { allowUnfree = true; }; };
   php = pkgs.php82.buildEnv { extraConfig = "memory_limit = 4G"; };
+  phpPackages = pkgs.php82.packages;
 in {
   home.username = "jbuecker";
   home.homeDirectory = "/Users/jbuecker";
@@ -30,8 +31,6 @@ in {
     bat
     caddy
     cargo
-    qemu
-    # colima # wait for 0.5.4 for rosetta
     coreutils
     curl
     direnv
@@ -44,15 +43,15 @@ in {
     gnugrep
     gnupg
     gnused
+    hclfmt
     htop
-    jpegoptim
     jq
     lazygit
     mysql80
-    natscli
-    neovim
+    unstable.neovim-unwrapped
     nixfmt
     nodejs
+    p7zip
     php
     phpPackages.composer
     phpPackages.phpstan
@@ -62,10 +61,8 @@ in {
     postgresql
     ripgrep
     rm-improved
-    rust-analyzer
-    rustc
-    rustfmt
     shellcheck
+    terragrunt
     tfswitch
     tldr
     tmux
@@ -79,11 +76,14 @@ in {
     xsel
     yubikey-manager
     zip
+
+    # macOS only
+    darwin.apple_sdk.frameworks.Security
   ];
 
   home.activation = {
     tfswitch = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      ${pkgs.tfswitch}/bin/tfswitch 1.3.6
+      ${pkgs.tfswitch}/bin/tfswitch 1.4.5
     '';
   };
 
@@ -124,10 +124,11 @@ in {
     };
 
     extraConfig = {
+      pull.rebase = true;
+      push.autoSetupRemote = true;
       push.default = "simple";
       fetch.prune = true;
       init.defaultBranch = "main";
-      push.autoSetupRemote = true;
       gpg = {
         format = "ssh";
         ssh = {
@@ -164,7 +165,6 @@ in {
     enableCompletion = false;
     oh-my-zsh = {
       enable = true;
-      # theme = "gnzh";
       theme = "amuse";
       plugins = [ "git" "docker" "aws" ];
     };
@@ -174,17 +174,12 @@ in {
     };
     sessionVariables = {
       DOCKER_BUILDKIT = 1;
-      DOCKER_HOST = "unix://$HOME/.colima/docker.sock";
-      RUSTFLAGS =
-        "-L /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib";
-      RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
       XDG_CONFIG_HOME = "$HOME/.config";
       MANPAGER = "nvim +Man!";
     };
     shellAliases = {
       # pbcopy = "xsel --clipboard --input"; # linux only
       # open = "xdg-open"; # linux only
-      # ykrestart = "gpgconf --reload scdaemon && gpgconf --kill gpg-agent && gpg-connect-agent updatestartuptty /bye"; # linux only
       adminer = "php -S 0.0.0.0:8080 $HOME/Downloads/adminer.php";
       awsume = ". awsume";
       hm = "home-manager";
@@ -211,19 +206,7 @@ in {
   };
 
   home.file = {
-    ".gnupg/pubkey.pub".source =
-      config.lib.file.mkOutOfStoreSymlink ./apps/gnupg/pubkey.pub;
-    ".gnupg/gpg-agent.conf".source =
-      config.lib.file.mkOutOfStoreSymlink ./apps/gnupg/gpg-agent.conf;
-    ".config/lvim/config.lua".source =
-      config.lib.file.mkOutOfStoreSymlink ./apps/lvim/config.lua;
     ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink ./apps/nvim;
-    ".config/kitty/kitty.conf".source =
-      config.lib.file.mkOutOfStoreSymlink ./apps/kitty/kitty.conf;
-    ".config/kitty/kanagawa.conf".source =
-      config.lib.file.mkOutOfStoreSymlink ./apps/kitty/kanagawa.conf;
-    ".colima/_templates/default.yaml".source =
-      config.lib.file.mkOutOfStoreSymlink ./apps/colima/colima.yaml;
     ".ssh/allowed_signers".text = ''
       j.buecker@shopware.com namespaces="git" ${
         builtins.readFile ./apps/ssh/id_ed25519.pub
