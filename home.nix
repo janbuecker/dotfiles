@@ -176,12 +176,12 @@ in {
       DOCKER_BUILDKIT = 1;
       XDG_CONFIG_HOME = "$HOME/.config";
       MANPAGER = "nvim +Man!";
+      AWS_PAGER = "";
     };
     shellAliases = {
       # pbcopy = "xsel --clipboard --input"; # linux only
       # open = "xdg-open"; # linux only
       adminer = "php -S 0.0.0.0:8080 $HOME/Downloads/adminer.php";
-      awsume = ". awsume";
       hm = "home-manager";
       vim = "nvim";
       tmux = "tmux -u";
@@ -191,10 +191,11 @@ in {
       cp = "cp -i";
       mv = "mv -i";
       rm = "rm -i";
+      awslocal = "aws --endpoint-url http://localhost:4566";
     };
     initExtra = ''
       # 1password integration
-      # source ~/.config/op/plugins.sh
+      source ~/.config/op/plugins.sh
       eval "$(op completion zsh)"; compdef _op op
 
       # custom scripts

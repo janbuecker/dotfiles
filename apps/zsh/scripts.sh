@@ -39,3 +39,8 @@ mfa() {
 	echo -n $_code
 	echo $_code | pbcopy
 }
+
+awsume() {
+	profile=$(aws configure list-profiles | fzf -1 -q "$*")
+	export AWS_PROFILE=$profile
+}
