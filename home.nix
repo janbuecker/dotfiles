@@ -6,7 +6,7 @@ let
 in {
   home.username = "jbuecker";
   home.homeDirectory = "/Users/jbuecker";
-  home.stateVersion = "22.11";
+  home.stateVersion = "23.11";
   home.sessionVariables = { EDITOR = "nvim"; };
   manual.manpages.enable = false;
 
@@ -33,6 +33,7 @@ in {
     cargo
     coreutils
     curl
+    unstable.cloudflared
     direnv
     docker
     fd
@@ -62,7 +63,7 @@ in {
     ripgrep
     rm-improved
     shellcheck
-    terragrunt
+    unstable.terragrunt
     tfswitch
     tldr
     tmux
@@ -83,7 +84,7 @@ in {
 
   home.activation = {
     tfswitch = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      ${pkgs.tfswitch}/bin/tfswitch 1.4.5
+      ${pkgs.tfswitch}/bin/tfswitch -u
     '';
   };
 
@@ -92,7 +93,7 @@ in {
     nix-direnv.enable = true;
   };
 
-  programs.exa = {
+  programs.eza = {
     enable = true;
     enableAliases = true;
   };
@@ -101,7 +102,7 @@ in {
 
   programs.go = {
     enable = true;
-    package = pkgs.go_1_20;
+    package = unstable.go_1_21;
     goPrivate = [ "gitlab.shopware.com" ];
     goPath = "opt/go";
   };
@@ -177,11 +178,14 @@ in {
       XDG_CONFIG_HOME = "$HOME/.config";
       MANPAGER = "nvim +Man!";
       AWS_PAGER = "";
+      TERRAGRUNT_IAM_ASSUME_ROLE_SESSION_NAME = "j.buecker@shopware.com";
+      TF_VAR_AWS_ROLE_SESSION_NAME = "j.buecker@shopware.com";
     };
     shellAliases = {
       # pbcopy = "xsel --clipboard --input"; # linux only
       # open = "xdg-open"; # linux only
       adminer = "php -S 0.0.0.0:8080 $HOME/Downloads/adminer.php";
+      # awsume = ". awsume";
       hm = "home-manager";
       vim = "nvim";
       tmux = "tmux -u";
@@ -192,10 +196,12 @@ in {
       mv = "mv -i";
       rm = "rm -i";
       awslocal = "aws --endpoint-url http://localhost:4566";
+      tailscale = "/Applications/Tailscale.app/Contents/MacOS/Tailscale";
+      golangci-update = "${pkgs.curl}/bin/curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(${pkgs.go}/bin/go env GOPATH)/bin";
     };
     initExtra = ''
       # 1password integration
-      source ~/.config/op/plugins.sh
+      # source ~/.config/op/plugins.sh
       eval "$(op completion zsh)"; compdef _op op
 
       # custom scripts
