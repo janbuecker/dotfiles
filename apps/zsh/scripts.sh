@@ -40,7 +40,25 @@ mfa() {
 	echo $_code | pbcopy
 }
 
+declare awsumeprofiles
 awsume() {
-	profile=$(aws configure list-profiles | fzf -1 -q "$*")
-	export AWS_PROFILE=$profile
+	# cache profiles
+	if [ -z "$awsumeprofiles" ]; then
+		awsumeprofiles=$(aws configure list-profiles)
+	fi
+
+	export AWS_PROFILE=$(echo "$awsumeprofiles" | fzf -1 -q "$*")
+	echo "Switched to profile: $AWS_PROFILE"
+}
+
+ec2connect() {
+	instances=$(aws ec2 describe-instances --query "Reservations[*].Instances[*].{InstanceId:InstanceId,PrivateIP:PrivateIpAddress,Name:Tags[?Key=='Name']|[0].Value,Type:InstanceType}" --filters Name=instance-state-name,Values=running --output text)
+	instanceID=$(echo "$instances" | fzf -1 -q "$*" | awk '{print $1}')
+
+	if [ -z "$instanceID" ]; then
+		echo "No instance selected"
+		exit 1
+	fi
+
+	aws ssm start-session --target "$instanceID"
 }
