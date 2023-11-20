@@ -5,6 +5,7 @@ config.default_prog = { wezterm.home_dir .. "/.nix-profile/bin/zsh" }
 config.font = wezterm.font("JetBrains Mono")
 config.font_size = 15.0
 config.pane_focus_follows_mouse = true
+config.window_decorations = "RESIZE"
 config.hide_tab_bar_if_only_one_tab = true
 config.inactive_pane_hsb = {
 	brightness = 0.7,
@@ -17,6 +18,15 @@ config.use_dead_keys = false
 config.keys = {
 	{ key = "d", mods = "CMD", action = wezterm.action.SplitHorizontal },
 	{ key = "D", mods = "CMD", action = wezterm.action.SplitVertical },
+}
+
+config.mouse_bindings = {
+	-- disable copy on select
+	{
+		event = { Up = { streak = 1, button = "Left" } },
+		mods = "NONE",
+		action = wezterm.action.Nop,
+	},
 }
 
 -- kanagawa
