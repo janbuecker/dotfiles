@@ -170,7 +170,7 @@ in {
     };
     localVariables = {
       PATH =
-        "$PATH:/usr/local/bin:$GOPATH/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/Library/Python/3.9/bin:$HOME/bin:${pkgs.nodejs}/bin";
+        "$PATH:/usr/local/bin:$GOPATH/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/Library/Python/3.9/bin:$HOME/bin:${pkgs.nodejs}/bin:/Applications/WezTerm.app/Contents/MacOS";
     };
     sessionVariables = {
       DOCKER_BUILDKIT = 1;
@@ -216,6 +216,8 @@ in {
     # secrets
     "intelephense/licence.txt".source =
       config.lib.file.mkOutOfStoreSymlink ./secrets/intelephense.txt;
+    ".config/wezterm".source =
+      config.lib.file.mkOutOfStoreSymlink ./apps/wezterm;
     ".aws/config".source =
       config.lib.file.mkOutOfStoreSymlink ./secrets/aws/config;
     ".aws/credentials".source =
