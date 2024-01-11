@@ -3,7 +3,7 @@ local config = wezterm.config_builder()
 
 config.default_prog = { wezterm.home_dir .. "/.nix-profile/bin/zsh" }
 config.font = wezterm.font("JetBrains Mono")
-config.font_size = 15.0
+config.font_size = 16.0
 config.pane_focus_follows_mouse = true
 config.window_decorations = "RESIZE"
 config.hide_tab_bar_if_only_one_tab = true
