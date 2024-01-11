@@ -1,8 +1,8 @@
 { config, pkgs, lib, ... }:
 let
   unstable = import <unstable> { config = { allowUnfree = true; }; };
-  php = pkgs.php82.buildEnv { extraConfig = "memory_limit = 4G"; };
-  phpPackages = pkgs.php82.packages;
+  php = pkgs.php83.buildEnv { extraConfig = "memory_limit = 4G"; };
+  phpPackages = pkgs.php83.packages;
 in {
   home.username = "jbuecker";
   home.homeDirectory = "/Users/jbuecker";
@@ -30,9 +30,7 @@ in {
     bash
     bat
     caddy
-    cargo
     coreutils
-    curl
     unstable.cloudflared
     direnv
     docker
@@ -42,7 +40,6 @@ in {
     git-crypt
     glab
     gnugrep
-    gnupg
     gnused
     hclfmt
     htop
@@ -58,35 +55,21 @@ in {
     phpPackages.phpstan
     phpPackages.psalm
     pigz
-    pinentry_mac
     postgresql
     ripgrep
-    rm-improved
-    shellcheck
     unstable.terragrunt
-    tfswitch
+    terraform
     tldr
     tmux
     unrar
     unstable.ssm-session-manager-plugin
-    unstable.temporal-cli
+    temporal-cli
     unzip
     wget
     wireguard-go
     wireguard-tools
-    xsel
-    yubikey-manager
     zip
-
-    # macOS only
-    darwin.apple_sdk.frameworks.Security
   ];
-
-  home.activation = {
-    tfswitch = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      ${pkgs.tfswitch}/bin/tfswitch -u
-    '';
-  };
 
   programs.direnv = {
     enable = true;
@@ -102,16 +85,13 @@ in {
 
   programs.go = {
     enable = true;
-    package = unstable.go_1_21;
     goPrivate = [ "gitlab.shopware.com" ];
     goPath = "opt/go";
   };
 
   programs.git = {
     enable = true;
-    package = unstable.git;
 
-    # signing.key = "C87088800768BC0E";
     signing.key =
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJlKV62/B496z2BR02s2HKI62QlDaPeXCbyDrs2TWODw";
     signing.signByDefault = true;
@@ -170,24 +150,25 @@ in {
       plugins = [ "git" "docker" "aws" ];
     };
     localVariables = {
-      PATH =
-        "$PATH:/usr/local/bin:$GOPATH/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/Library/Python/3.9/bin:$HOME/bin:${pkgs.nodejs}/bin:/Applications/WezTerm.app/Contents/MacOS";
+      PATH = builtins.concatStringsSep ":" [
+        "$PATH"
+        "/usr/local/bin"
+        "$GOPATH/bin"
+        "$HOME/bin"
+        "$HOME/.local/bin"
+        "${pkgs.nodejs}/bin"
+        "/Applications/WezTerm.app/Contents/MacOS"
+      ];
     };
     sessionVariables = {
       DOCKER_BUILDKIT = 1;
       XDG_CONFIG_HOME = "$HOME/.config";
       MANPAGER = "nvim +Man!";
       AWS_PAGER = "";
-      TERRAGRUNT_IAM_ASSUME_ROLE_SESSION_NAME = "j.buecker@shopware.com";
-      TF_VAR_AWS_ROLE_SESSION_NAME = "j.buecker@shopware.com";
+      TF_PLUGIN_CACHE_DIR = "$HOME/.cache/terraform";
     };
     shellAliases = {
-      # pbcopy = "xsel --clipboard --input"; # linux only
-      # open = "xdg-open"; # linux only
-      adminer = "php -S 0.0.0.0:8080 $HOME/Downloads/adminer.php";
-      # awsume = ". awsume";
       hm = "home-manager";
-      vim = "nvim";
       tmux = "tmux -u";
       lg = "lazygit";
       cat = ''bat -pp --theme "Visual Studio Dark+"'';
@@ -196,12 +177,15 @@ in {
       mv = "mv -i";
       rm = "rm -i";
       awslocal = "aws --endpoint-url http://localhost:4566";
+      sso = "aws sso login --sso-session sso";
       tailscale = "/Applications/Tailscale.app/Contents/MacOS/Tailscale";
-      golangci-update = "${pkgs.curl}/bin/curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(${pkgs.go}/bin/go env GOPATH)/bin";
+      golangci-update =
+        "${pkgs.curl}/bin/curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(${pkgs.go}/bin/go env GOPATH)/bin";
+      mclidev =
+        "go build -C ~/opt/cloud/mcli -o mcli main.go && ~/opt/cloud/mcli/mcli --auto-update=false";
     };
     initExtra = ''
-      # 1password integration
-      # source ~/.config/op/plugins.sh
+      # 1password
       eval "$(op completion zsh)"; compdef _op op
 
       # custom scripts
@@ -228,16 +212,8 @@ in {
       config.lib.file.mkOutOfStoreSymlink ./secrets/aws/config;
     ".aws/credentials".source =
       config.lib.file.mkOutOfStoreSymlink ./secrets/aws/credentials;
-    ".ssh/cloud".source =
-      config.lib.file.mkOutOfStoreSymlink ./secrets/ssh/cloud;
     ".ssh/config".source =
       config.lib.file.mkOutOfStoreSymlink ./secrets/ssh/config;
     ".netrc".source = config.lib.file.mkOutOfStoreSymlink ./secrets/netrc;
-    ".config/wireguard/prod.private-key.gpg".source =
-      config.lib.file.mkOutOfStoreSymlink
-      ./secrets/wireguard/prod.private-key.gpg;
-    ".config/wireguard/staging.private-key.gpg".source =
-      config.lib.file.mkOutOfStoreSymlink
-      ./secrets/wireguard/staging.private-key.gpg;
   };
 }
