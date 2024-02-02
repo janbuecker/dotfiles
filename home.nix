@@ -16,6 +16,9 @@ in {
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
+  # configure home paths
+  xdg.enable = true;
+
   # neovim nightly
   # nixpkgs.overlays = [
   #   (import (builtins.fetchTarball {
@@ -25,6 +28,7 @@ in {
   # ];
 
   home.packages = with pkgs; [
+    unstable._1password
     awscli2
     bandwhich
     bash
@@ -32,6 +36,7 @@ in {
     caddy
     coreutils
     unstable.cloudflared
+    unstable.curl
     direnv
     docker
     fd
@@ -44,9 +49,12 @@ in {
     hclfmt
     htop
     jq
+    k9s
+    kubectl
     lazygit
     mysql80
     unstable.neovim-unwrapped
+    # neovim-nightly
     nixfmt
     nodejs
     p7zip
@@ -162,7 +170,6 @@ in {
     };
     sessionVariables = {
       DOCKER_BUILDKIT = 1;
-      XDG_CONFIG_HOME = "$HOME/.config";
       MANPAGER = "nvim +Man!";
       AWS_PAGER = "";
       TF_PLUGIN_CACHE_DIR = "$HOME/.cache/terraform";
