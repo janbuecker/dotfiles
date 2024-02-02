@@ -21,11 +21,19 @@ config.keys = {
 }
 
 config.mouse_bindings = {
-	-- disable copy on select
+	-- Change the default click behavior so that it only selects
+	-- text and doesn't open hyperlinks
 	{
 		event = { Up = { streak = 1, button = "Left" } },
 		mods = "NONE",
-		action = wezterm.action.Nop,
+		action = wezterm.action.CompleteSelection("ClipboardAndPrimarySelection"),
+	},
+
+	-- and make CTRL-Click open hyperlinks
+	{
+		event = { Up = { streak = 1, button = "Left" } },
+		mods = "CTRL",
+		action = wezterm.action.OpenLinkAtMouseCursor,
 	},
 }
 
