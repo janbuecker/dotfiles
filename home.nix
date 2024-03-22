@@ -1,8 +1,40 @@
 { config, pkgs, lib, ... }:
 let
   unstable = import <unstable> { config = { allowUnfree = true; }; };
-  php = pkgs.php83.buildEnv { extraConfig = "memory_limit = 4G"; };
+  php = pkgs.php83.buildEnv {
+    extraConfig = "memory_limit = 4G";
+    extensions = ({ enabled, all }: enabled ++ (with all; [ redis grpc ]));
+  };
   phpPackages = pkgs.php83.packages;
+
+  terragrunt = pkgs.stdenv.mkDerivation {
+    name = "terragrunt";
+    phases = [ "installPhase" ];
+    installPhase = ''
+      install -D $src $out/bin/terragrunt
+    '';
+    src = pkgs.fetchurl {
+      name = "terragrunt";
+      url =
+        "https://github.com/gruntwork-io/terragrunt/releases/download/v0.55.3/terragrunt_darwin_arm64";
+      sha256 = "1db45dyfbcii7jmh9whgf9dwffm562zw32afr5awp74gm7lkj5wz";
+    };
+  };
+
+  golangci-lint-version = "1.57.1";
+  golangci-lint = pkgs.stdenv.mkDerivation {
+    name = "golangci-lint";
+    phases = [ "installPhase" ];
+    installPhase = ''
+      install -D $src/golangci-lint $out/bin/golangci-lint
+    '';
+    src = pkgs.fetchzip {
+      name = "golangci-lint";
+      url =
+        "https://github.com/golangci/golangci-lint/releases/download/v${golangci-lint-version}/golangci-lint-${golangci-lint-version}-darwin-arm64.tar.gz";
+      sha256 = "0yk68nlwb34spscygmwvmp2k30cajmcd9wvvhxqflqa0v5j0cgjv";
+    };
+  };
 in {
   home.username = "jbuecker";
   home.homeDirectory = "/Users/jbuecker";
@@ -20,23 +52,22 @@ in {
   xdg.enable = true;
 
   # neovim nightly
-  # nixpkgs.overlays = [
-  #   (import (builtins.fetchTarball {
-  #     url =
-  #       "https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz";
-  #   }))
-  # ];
+  nixpkgs.overlays = [
+    (import (builtins.fetchTarball {
+      url =
+        "https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz";
+    }))
+  ];
 
   home.packages = with pkgs; [
-    unstable._1password
-    awscli2
+    # unstable.neovim-unwrapped
+    act
     bandwhich
     bash
     bat
     caddy
+    cargo
     coreutils
-    unstable.cloudflared
-    unstable.curl
     direnv
     docker
     fd
@@ -46,6 +77,7 @@ in {
     glab
     gnugrep
     gnused
+    golangci-lint
     hclfmt
     htop
     jq
@@ -53,29 +85,34 @@ in {
     kubectl
     lazygit
     mysql80
-    unstable.neovim-unwrapped
-    # neovim-nightly
+    neovim-nightly
     nixfmt
     nodejs
     p7zip
     php
-    phpPackages.composer
-    phpPackages.phpstan
-    phpPackages.psalm
+    php.packages.composer
+    php.packages.php-cs-fixer
+    php.packages.phpstan
+    php.packages.psalm
     pigz
     postgresql
     ripgrep
-    unstable.terragrunt
+    temporal-cli
     terraform
+    terragrunt
     tldr
     tmux
     unrar
+    unstable._1password
+    unstable.awscli2
+    unstable.cloudflared
+    unstable.curl
     unstable.ssm-session-manager-plugin
-    temporal-cli
     unzip
     wget
     wireguard-go
     wireguard-tools
+    yamlfmt
     zip
   ];
 
@@ -84,15 +121,12 @@ in {
     nix-direnv.enable = true;
   };
 
-  programs.eza = {
-    enable = true;
-    enableAliases = true;
-  };
-
+  programs.eza = { enable = true; };
   programs.bottom = { enable = true; };
 
   programs.go = {
     enable = true;
+    package = unstable.go_1_22;
     goPrivate = [ "gitlab.shopware.com" ];
     goPath = "opt/go";
   };
@@ -155,14 +189,14 @@ in {
     oh-my-zsh = {
       enable = true;
       theme = "amuse";
-      plugins = [ "git" "docker" "aws" ];
+      plugins = [ "git" "docker" "aws" "fzf" ];
     };
     localVariables = {
       PATH = builtins.concatStringsSep ":" [
         "$PATH"
+        "$HOME/bin"
         "/usr/local/bin"
         "$GOPATH/bin"
-        "$HOME/bin"
         "$HOME/.local/bin"
         "${pkgs.nodejs}/bin"
         "/Applications/WezTerm.app/Contents/MacOS"
@@ -178,16 +212,18 @@ in {
       hm = "home-manager";
       tmux = "tmux -u";
       lg = "lazygit";
-      cat = ''bat -pp --theme "Visual Studio Dark+"'';
-      catt = ''bat --theme "Visual Studio Dark+"'';
+      cat = "bat -pp";
+      catt = "bat";
       cp = "cp -i";
       mv = "mv -i";
       rm = "rm -i";
+      fdd =
+        "fd --type directory --search-path `git rev-parse --show-toplevel` | fzf";
       awslocal = "aws --endpoint-url http://localhost:4566";
       sso = "aws sso login --sso-session sso";
       tailscale = "/Applications/Tailscale.app/Contents/MacOS/Tailscale";
       golangci-update =
-        "${pkgs.curl}/bin/curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(${pkgs.go}/bin/go env GOPATH)/bin";
+        "${config.home.homeDirectory}/.nix-profile/bin/curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(${config.home.homeDirectory}/.nix-profile/bin/go env GOPATH)/bin";
       mclidev =
         "go build -C ~/opt/cloud/mcli -o mcli main.go && ~/opt/cloud/mcli/mcli --auto-update=false";
     };
