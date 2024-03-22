@@ -18,6 +18,8 @@ config.use_dead_keys = false
 config.keys = {
 	{ key = "d", mods = "CMD", action = wezterm.action.SplitHorizontal },
 	{ key = "D", mods = "CMD", action = wezterm.action.SplitVertical },
+	{ key = "b", mods = "CTRL", action = wezterm.action.RotatePanes("CounterClockwise") },
+	{ key = "n", mods = "CTRL", action = wezterm.action.RotatePanes("Clockwise") },
 }
 
 config.mouse_bindings = {
