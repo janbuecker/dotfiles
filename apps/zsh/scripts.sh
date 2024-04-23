@@ -108,3 +108,54 @@ ec2connect() {
 
   aws ssm start-session --target "$instanceID"
 }
+
+cognito() {
+  printf '%-14s ' "User Pool ID:"
+  poolID=$(aws cognito-idp list-user-pools --max-results 50 --output text --query 'UserPools[].Id' | fzf -1)
+  if [ -z "$poolID" ]; then
+    exit 1
+  fi
+  echo $poolID
+
+  usernames=$(aws cognito-idp list-users --user-pool-id "$poolID" --query "Users[].Username" --output json | jq -r '.[]')
+  printf '%-14s ' "Username:"
+  username=$(echo "$usernames" | fzf -1 -q "$1")
+  if [ -z "$username" ]; then
+    return
+  fi
+  echo $username
+
+  availableGroups=$(aws cognito-idp list-groups --user-pool-id "$poolID" --output json --query "Groups[].GroupName" | jq -r '.[]')
+  currentGroups=$(aws cognito-idp admin-list-groups-for-user --user-pool-id "$poolID" --username "$username" --output json --query "Groups[].GroupName" | jq -r '.[]')
+  groups=$(echo "$availableGroups" | fzf --multi --preview-window="top:50%" --preview-label="Current groups" --preview "echo \"$currentGroups"\")
+  if [ -z "$groups" ]; then
+    return
+  fi
+  printf '%-14s ' "Groups:"
+
+  echo
+
+  diff --color=always -u <(echo "$currentGroups" | sort) <(echo "$groups" | sort) | tail -n +4
+
+  echo
+
+  read -r -p "Continue? [y/N] " -n 1
+  echo
+  if [[ ! "$REPLY" =~ ^[Yy]$ ]]; then
+    return
+  fi
+
+  for g in $groups; do
+    if [[ ! " ${currentGroups[*]} " =~ $g ]]; then
+      echo "* Adding to $g"
+      aws cognito-idp admin-add-user-to-group --user-pool-id "$poolID" --username "$username" --group-name "$g"
+    fi
+  done
+
+  for g in $currentGroups; do
+    if [[ ! " ${groups[*]} " =~ $g ]]; then
+      echo "* Removing from $g"
+      aws cognito-idp admin-remove-user-from-group --user-pool-id "$poolID" --username "$username" --group-name "$g"
+    fi
+  done
+}
