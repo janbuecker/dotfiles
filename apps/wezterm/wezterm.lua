@@ -7,6 +7,12 @@ config.font_size = 16.0
 config.pane_focus_follows_mouse = true
 config.window_decorations = "RESIZE"
 config.hide_tab_bar_if_only_one_tab = true
+config.bold_brightens_ansi_colors = "BrightAndBold"
+config.default_cursor_style = "BlinkingBar"
+config.cursor_blink_ease_in = "Constant"
+config.cursor_blink_ease_out = "Constant"
+config.front_end = "WebGpu"
+config.webgpu_power_preference = "HighPerformance"
 config.inactive_pane_hsb = {
 	brightness = 0.7,
 }
@@ -57,7 +63,7 @@ config.colors = {
 
 	ansi = { "#090618", "#c34043", "#76946a", "#c0a36e", "#7e9cd8", "#957fb8", "#6a9589", "#c8c093" },
 	brights = { "#727169", "#e82424", "#98bb6c", "#e6c384", "#7fb4ca", "#938aa9", "#7aa89f", "#dcd7ba" },
-	indexed = { [16] = "#ffa066", [17] = "#ff5d62" },
+	indexed = { [16] = "#ffa066", [17] = "#ff5d62", [241] = "#2d4f67" },
 }
 
 return config
