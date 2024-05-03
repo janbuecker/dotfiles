@@ -16,12 +16,12 @@ let
     src = pkgs.fetchurl {
       name = "terragrunt";
       url =
-        "https://github.com/gruntwork-io/terragrunt/releases/download/v0.55.3/terragrunt_darwin_arm64";
-      sha256 = "1db45dyfbcii7jmh9whgf9dwffm562zw32afr5awp74gm7lkj5wz";
+        "https://github.com/gruntwork-io/terragrunt/releases/download/v0.57.13/terragrunt_darwin_arm64";
+      sha256 = "1lm1a83lrfa6mx99yywj8y8sbl6qnm3cfiwg4kk6ycj4913kac9w";
     };
   };
 
-  golangci-lint-version = "1.57.1";
+  golangci-lint-version = "1.57.2";
   golangci-lint = pkgs.stdenv.mkDerivation {
     name = "golangci-lint";
     phases = [ "installPhase" ];
@@ -32,7 +32,7 @@ let
       name = "golangci-lint";
       url =
         "https://github.com/golangci/golangci-lint/releases/download/v${golangci-lint-version}/golangci-lint-${golangci-lint-version}-darwin-arm64.tar.gz";
-      sha256 = "0yk68nlwb34spscygmwvmp2k30cajmcd9wvvhxqflqa0v5j0cgjv";
+      sha256 = "1xv3i70qmsd8wmd3bs2ij18vff0vbn52fr77ksam9hxbql8sdjzv";
     };
   };
 in {
@@ -52,19 +52,20 @@ in {
   xdg.enable = true;
 
   # neovim nightly
-  nixpkgs.overlays = [
-    (import (builtins.fetchTarball {
-      url =
-        "https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz";
-    }))
-  ];
+  # nixpkgs.overlays = [
+  #   (import (builtins.fetchTarball {
+  #     url =
+  #       "https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz";
+  #   }))
+  # ];
 
   home.packages = with pkgs; [
-    # unstable.neovim-unwrapped
-    act
+    unstable.neovim-unwrapped
+    air
     bandwhich
     bash
     bat
+    bun
     caddy
     cargo
     coreutils
@@ -74,10 +75,12 @@ in {
     findutils
     fzf
     git-crypt
+    gh
     glab
     gnugrep
     gnused
     golangci-lint
+    unstable.goreleaser
     hclfmt
     htop
     jq
@@ -85,9 +88,10 @@ in {
     kubectl
     lazygit
     mysql80
-    neovim-nightly
+    # neovim-nightly
     nixfmt
     nodejs
+    nodePackages.parcel
     p7zip
     php
     php.packages.composer
@@ -97,6 +101,7 @@ in {
     pigz
     postgresql
     ripgrep
+    templ
     temporal-cli
     terraform
     terragrunt
@@ -207,6 +212,7 @@ in {
       MANPAGER = "nvim +Man!";
       AWS_PAGER = "";
       TF_PLUGIN_CACHE_DIR = "$HOME/.cache/terraform";
+      TERRAGRUNT_PROVIDER_CACHE = 1;
     };
     shellAliases = {
       hm = "home-manager";
