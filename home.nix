@@ -249,12 +249,12 @@ in {
       config.lib.file.mkOutOfStoreSymlink ./apps/lazygit/config.yml;
     ".config/bat/config".source =
       config.lib.file.mkOutOfStoreSymlink ./apps/bat/config;
+    ".config/wezterm".source =
+      config.lib.file.mkOutOfStoreSymlink ./apps/wezterm;
 
     # secrets
     "intelephense/licence.txt".source =
       config.lib.file.mkOutOfStoreSymlink ./secrets/intelephense.txt;
-    ".config/wezterm".source =
-      config.lib.file.mkOutOfStoreSymlink ./apps/wezterm;
     ".aws/config".source =
       config.lib.file.mkOutOfStoreSymlink ./secrets/aws/config;
     ".aws/credentials".source =
