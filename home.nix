@@ -247,6 +247,8 @@ in {
       }'';
     ".config/lazygit/config.yml".source =
       config.lib.file.mkOutOfStoreSymlink ./apps/lazygit/config.yml;
+    ".config/bat/config".source =
+      config.lib.file.mkOutOfStoreSymlink ./apps/bat/config;
 
     # secrets
     "intelephense/licence.txt".source =
