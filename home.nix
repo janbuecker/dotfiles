@@ -245,6 +245,8 @@ in {
       j.buecker@shopware.com namespaces="git" ${
         builtins.readFile ./apps/ssh/id_ed25519.pub
       }'';
+    ".config/lazygit/config.yml".source =
+      config.lib.file.mkOutOfStoreSymlink ./apps/lazygit/config.yml;
 
     # secrets
     "intelephense/licence.txt".source =
