@@ -9,6 +9,6 @@ gui:
   skipDiscardChangeWarning: true
   theme:
     selectedLineBgColor:
-      - "#2d4f67"
+      - reverse
 disableStartupPopups: true
 notARepository: "skip" # one of: 'prompt' | 'create' | 'skip'
