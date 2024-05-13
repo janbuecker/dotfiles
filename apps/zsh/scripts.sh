@@ -139,7 +139,7 @@ cognito() {
 
   echo
 
-  read -r -p "Continue? [y/N] " -n 1
+  read -r -q "REPLY?Continue? [y/N] "
   echo
   if [[ ! "$REPLY" =~ ^[Yy]$ ]]; then
     return
