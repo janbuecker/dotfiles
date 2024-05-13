@@ -1,9 +1,25 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
-  unstable = import <unstable> { config = { allowUnfree = true; }; };
+  unstable = import <unstable> {
+    config = {
+      allowUnfree = true;
+    };
+  };
   php = pkgs.php83.buildEnv {
     extraConfig = "memory_limit = 4G";
-    extensions = ({ enabled, all }: enabled ++ (with all; [ redis grpc ]));
+    extensions = (
+      { enabled, all }:
+      enabled
+      ++ (with all; [
+        redis
+        grpc
+      ])
+    );
   };
   phpPackages = pkgs.php83.packages;
 
@@ -15,8 +31,7 @@ let
     '';
     src = pkgs.fetchurl {
       name = "terragrunt";
-      url =
-        "https://github.com/gruntwork-io/terragrunt/releases/download/v0.57.13/terragrunt_darwin_arm64";
+      url = "https://github.com/gruntwork-io/terragrunt/releases/download/v0.57.13/terragrunt_darwin_arm64";
       sha256 = "1lm1a83lrfa6mx99yywj8y8sbl6qnm3cfiwg4kk6ycj4913kac9w";
     };
   };
@@ -30,16 +45,18 @@ let
     '';
     src = pkgs.fetchzip {
       name = "golangci-lint";
-      url =
-        "https://github.com/golangci/golangci-lint/releases/download/v${golangci-lint-version}/golangci-lint-${golangci-lint-version}-darwin-arm64.tar.gz";
+      url = "https://github.com/golangci/golangci-lint/releases/download/v${golangci-lint-version}/golangci-lint-${golangci-lint-version}-darwin-arm64.tar.gz";
       sha256 = "1xv3i70qmsd8wmd3bs2ij18vff0vbn52fr77ksam9hxbql8sdjzv";
     };
   };
-in {
+in
+{
   home.username = "jbuecker";
   home.homeDirectory = "/Users/jbuecker";
   home.stateVersion = "23.11";
-  home.sessionVariables = { EDITOR = "nvim"; };
+  home.sessionVariables = {
+    EDITOR = "nvim";
+  };
   manual.manpages.enable = false;
 
   # Let Home Manager install and manage itself.
@@ -89,7 +106,7 @@ in {
     lazygit
     mysql80
     # neovim-nightly
-    nixfmt
+    nixfmt-rfc-style
     nodejs
     nodePackages.parcel
     p7zip
@@ -126,8 +143,12 @@ in {
     nix-direnv.enable = true;
   };
 
-  programs.eza = { enable = true; };
-  programs.bottom = { enable = true; };
+  programs.eza = {
+    enable = true;
+  };
+  programs.bottom = {
+    enable = true;
+  };
 
   programs.go = {
     enable = true;
@@ -139,8 +160,7 @@ in {
   programs.git = {
     enable = true;
 
-    signing.key =
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJlKV62/B496z2BR02s2HKI62QlDaPeXCbyDrs2TWODw";
+    signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJlKV62/B496z2BR02s2HKI62QlDaPeXCbyDrs2TWODw";
     signing.signByDefault = true;
 
     userEmail = "j.buecker@shopware.com";
@@ -194,7 +214,12 @@ in {
     oh-my-zsh = {
       enable = true;
       theme = "amuse";
-      plugins = [ "git" "docker" "aws" "fzf" ];
+      plugins = [
+        "git"
+        "docker"
+        "aws"
+        "fzf"
+      ];
     };
     localVariables = {
       PATH = builtins.concatStringsSep ":" [
@@ -223,15 +248,12 @@ in {
       cp = "cp -i";
       mv = "mv -i";
       rm = "rm -i";
-      fdd =
-        "fd --type directory --search-path `git rev-parse --show-toplevel` | fzf";
+      fdd = "fd --type directory --search-path `git rev-parse --show-toplevel` | fzf";
       awslocal = "aws --endpoint-url http://localhost:4566";
       sso = "aws sso login --sso-session sso";
       tailscale = "/Applications/Tailscale.app/Contents/MacOS/Tailscale";
-      golangci-update =
-        "${config.home.homeDirectory}/.nix-profile/bin/curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(${config.home.homeDirectory}/.nix-profile/bin/go env GOPATH)/bin";
-      mclidev =
-        "go build -C ~/opt/cloud/mcli -o mcli main.go && ~/opt/cloud/mcli/mcli --auto-update=false";
+      golangci-update = "${config.home.homeDirectory}/.nix-profile/bin/curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(${config.home.homeDirectory}/.nix-profile/bin/go env GOPATH)/bin";
+      mclidev = "go build -C ~/opt/cloud/mcli -o mcli main.go && ~/opt/cloud/mcli/mcli";
     };
     initExtra = ''
       # 1password
@@ -247,26 +269,16 @@ in {
 
   home.file = {
     ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink ./apps/nvim;
-    ".ssh/allowed_signers".text = ''
-      j.buecker@shopware.com namespaces="git" ${
-        builtins.readFile ./apps/ssh/id_ed25519.pub
-      }'';
-    ".config/lazygit/config.yml".source =
-      config.lib.file.mkOutOfStoreSymlink ./apps/lazygit/config.yml;
-    ".config/bat/config".source =
-      config.lib.file.mkOutOfStoreSymlink ./apps/bat/config;
-    ".config/wezterm".source =
-      config.lib.file.mkOutOfStoreSymlink ./apps/wezterm;
+    ".ssh/allowed_signers".text = ''j.buecker@shopware.com namespaces="git" ${builtins.readFile ./apps/ssh/id_ed25519.pub}'';
+    ".config/lazygit/config.yml".source = config.lib.file.mkOutOfStoreSymlink ./apps/lazygit/config.yml;
+    ".config/bat/config".source = config.lib.file.mkOutOfStoreSymlink ./apps/bat/config;
+    ".config/wezterm".source = config.lib.file.mkOutOfStoreSymlink ./apps/wezterm;
 
     # secrets
-    "intelephense/licence.txt".source =
-      config.lib.file.mkOutOfStoreSymlink ./secrets/intelephense.txt;
-    ".aws/config".source =
-      config.lib.file.mkOutOfStoreSymlink ./secrets/aws/config;
-    ".aws/credentials".source =
-      config.lib.file.mkOutOfStoreSymlink ./secrets/aws/credentials;
-    ".ssh/config".source =
-      config.lib.file.mkOutOfStoreSymlink ./secrets/ssh/config;
+    "intelephense/licence.txt".source = config.lib.file.mkOutOfStoreSymlink ./secrets/intelephense.txt;
+    ".aws/config".source = config.lib.file.mkOutOfStoreSymlink ./secrets/aws/config;
+    ".aws/credentials".source = config.lib.file.mkOutOfStoreSymlink ./secrets/aws/credentials;
+    ".ssh/config".source = config.lib.file.mkOutOfStoreSymlink ./secrets/ssh/config;
     ".netrc".source = config.lib.file.mkOutOfStoreSymlink ./secrets/netrc;
   };
 }
