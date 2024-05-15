@@ -10,6 +10,11 @@ let
       allowUnfree = true;
     };
   };
+
+  nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/master.tar.gz") {
+    inherit pkgs;
+  };
+
   php = pkgs.php83.buildEnv {
     extraConfig = "memory_limit = 4G";
     extensions = (
@@ -31,12 +36,12 @@ let
     '';
     src = pkgs.fetchurl {
       name = "terragrunt";
-      url = "https://github.com/gruntwork-io/terragrunt/releases/download/v0.57.13/terragrunt_darwin_arm64";
-      sha256 = "1lm1a83lrfa6mx99yywj8y8sbl6qnm3cfiwg4kk6ycj4913kac9w";
+      url = "https://github.com/gruntwork-io/terragrunt/releases/download/v0.58.4/terragrunt_darwin_arm64";
+      sha256 = "1cysdvgxr0xfkzgvwa1xvfmb4mvxcl9g8n83p5p757zqy1ginpsb";
     };
   };
 
-  golangci-lint-version = "1.57.2";
+  golangci-lint-version = "1.58.1";
   golangci-lint = pkgs.stdenv.mkDerivation {
     name = "golangci-lint";
     phases = [ "installPhase" ];
@@ -46,7 +51,7 @@ let
     src = pkgs.fetchzip {
       name = "golangci-lint";
       url = "https://github.com/golangci/golangci-lint/releases/download/v${golangci-lint-version}/golangci-lint-${golangci-lint-version}-darwin-arm64.tar.gz";
-      sha256 = "1xv3i70qmsd8wmd3bs2ij18vff0vbn52fr77ksam9hxbql8sdjzv";
+      sha256 = "16q9w1lw4ya85yk6j46v0xfills4jidwk1r7cj9kzb9q4br4x17r";
     };
   };
 in
@@ -97,7 +102,7 @@ in
     gnugrep
     gnused
     golangci-lint
-    unstable.goreleaser
+    nur.repos.goreleaser.goreleaser-pro
     hclfmt
     htop
     jq
@@ -254,6 +259,7 @@ in
       tailscale = "/Applications/Tailscale.app/Contents/MacOS/Tailscale";
       golangci-update = "${config.home.homeDirectory}/.nix-profile/bin/curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(${config.home.homeDirectory}/.nix-profile/bin/go env GOPATH)/bin";
       mclidev = "go build -C ~/opt/cloud/mcli -o mcli main.go && ~/opt/cloud/mcli/mcli";
+      gopro = "export GORELEASER_KEY=$(op item get Goreleaser --fields \"label=license key\")";
     };
     initExtra = ''
       # 1password
