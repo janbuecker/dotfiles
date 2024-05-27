@@ -96,6 +96,7 @@ in
     fd
     findutils
     fzf
+    unstable.git-credential-oauth
     git-crypt
     gh
     glab
@@ -182,12 +183,34 @@ in
       push.default = "simple";
       fetch.prune = true;
       init.defaultBranch = "main";
+
       gpg = {
         format = "ssh";
         ssh = {
           program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
           allowedSignersFile = "~/.ssh/allowed_signers";
         };
+      };
+
+      credential.helper = [
+        "cache"
+        "oauth"
+      ];
+
+      url = {
+        "https://github.com/" = {
+          insteadOf = "git@github.com:";
+        };
+        "https://gitlab.shopware.com/" = {
+          insteadOf = "git@gitlab.shopware.com:";
+        };
+      };
+
+      credential."https://gitlab.shopware.com" = {
+        oauthClientId = "27dbdada9445855de26ad7fd4f3f0e0eb30f31ee618cdbcc2987d3ba652e6f6d";
+        oauthScopes = "read_repository write_repository";
+        oauthAuthURL = "/oauth/authorize";
+        oauthTokenURL = "/oauth/token";
       };
     };
 
