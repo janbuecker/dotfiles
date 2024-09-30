@@ -22,10 +22,8 @@ config.use_dead_keys = false
 
 -- keymaps
 config.keys = {
-	{ key = "d", mods = "CMD", action = wezterm.action.SplitHorizontal },
-	{ key = "D", mods = "CMD", action = wezterm.action.SplitVertical },
-	{ key = "b", mods = "CTRL", action = wezterm.action.RotatePanes("CounterClockwise") },
-	{ key = "n", mods = "CTRL", action = wezterm.action.RotatePanes("Clockwise") },
+    { key = "d", mods = "CMD", action = wezterm.action.SplitHorizontal },
+    { key = "D", mods = "CMD", action = wezterm.action.SplitVertical },
 }
 
 config.mouse_bindings = {
