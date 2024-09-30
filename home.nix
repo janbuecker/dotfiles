@@ -36,12 +36,12 @@ let
     '';
     src = pkgs.fetchurl {
       name = "terragrunt";
-      url = "https://github.com/gruntwork-io/terragrunt/releases/download/v0.58.4/terragrunt_darwin_arm64";
-      sha256 = "1cysdvgxr0xfkzgvwa1xvfmb4mvxcl9g8n83p5p757zqy1ginpsb";
+      url = "https://github.com/gruntwork-io/terragrunt/releases/download/v0.67.6/terragrunt_darwin_arm64";
+      sha256 = "16hcjzygj9zv3ff07k2idpjma4m6y3k83qc51hbd1m658pdbb3yb";
     };
   };
 
-  golangci-lint-version = "1.58.1";
+  golangci-lint-version = "1.61.0";
   golangci-lint = pkgs.stdenv.mkDerivation {
     name = "golangci-lint";
     phases = [ "installPhase" ];
@@ -51,14 +51,14 @@ let
     src = pkgs.fetchzip {
       name = "golangci-lint";
       url = "https://github.com/golangci/golangci-lint/releases/download/v${golangci-lint-version}/golangci-lint-${golangci-lint-version}-darwin-arm64.tar.gz";
-      sha256 = "16q9w1lw4ya85yk6j46v0xfills4jidwk1r7cj9kzb9q4br4x17r";
+      sha256 = "0v67xf2fv9ikcnzbmfkkhl855dr8p6fdswwg58xrxnjxlwxdgx1j";
     };
   };
 in
 {
   home.username = "jbuecker";
   home.homeDirectory = "/Users/jbuecker";
-  home.stateVersion = "23.11";
+  home.stateVersion = "24.05";
   home.sessionVariables = {
     EDITOR = "nvim";
   };
@@ -75,10 +75,11 @@ in
 
   # neovim nightly
   # nixpkgs.overlays = [
-  #   (import (builtins.fetchTarball {
-  #     url =
-  #       "https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz";
-  #   }))
+  #   (import (
+  #     builtins.fetchTarball {
+  #       url = "https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz";
+  #     }
+  #   ))
   # ];
 
   home.packages = with pkgs; [
@@ -95,8 +96,6 @@ in
     docker
     fd
     findutils
-    fzf
-    unstable.git-credential-oauth
     git-crypt
     gh
     glab
@@ -105,13 +104,16 @@ in
     golangci-lint
     nur.repos.goreleaser.goreleaser-pro
     hclfmt
+    helix
     htop
     jq
     k9s
     kubectl
     lazygit
+    monaspace
     mysql80
     # neovim-nightly
+    natscli
     nixfmt-rfc-style
     nodejs
     nodePackages.parcel
@@ -123,7 +125,9 @@ in
     php.packages.psalm
     pigz
     postgresql
+    rclone
     ripgrep
+    sketchybar
     templ
     temporal-cli
     terraform
@@ -132,10 +136,10 @@ in
     tmux
     unrar
     unstable._1password
-    unstable.awscli2
+    awscli2
     unstable.cloudflared
     unstable.curl
-    unstable.ssm-session-manager-plugin
+    ssm-session-manager-plugin
     unzip
     wget
     wireguard-go
@@ -183,6 +187,7 @@ in
       push.default = "simple";
       fetch.prune = true;
       init.defaultBranch = "main";
+      commit.template = "~/.config/git/commit";
 
       gpg = {
         format = "ssh";
@@ -192,25 +197,13 @@ in
         };
       };
 
-      credential.helper = [
-        "cache"
-        "oauth"
-      ];
-
       url = {
         "https://github.com/" = {
           insteadOf = "git@github.com:";
         };
-        "https://gitlab.shopware.com/" = {
-          insteadOf = "git@gitlab.shopware.com:";
+        "git@gitlab.shopware.com:" = {
+          insteadOf = "https://gitlab.shopware.com/";
         };
-      };
-
-      credential."https://gitlab.shopware.com" = {
-        oauthClientId = "27dbdada9445855de26ad7fd4f3f0e0eb30f31ee618cdbcc2987d3ba652e6f6d";
-        oauthScopes = "read_repository write_repository";
-        oauthAuthURL = "/oauth/authorize";
-        oauthTokenURL = "/oauth/token";
       };
     };
 
@@ -238,16 +231,23 @@ in
 
   programs.zsh = {
     enable = true;
-    enableCompletion = false;
-    oh-my-zsh = {
+    autocd = true;
+    dotDir = ".config/zsh";
+    defaultKeymap = "emacs";
+    autosuggestion = {
       enable = true;
-      theme = "amuse";
-      plugins = [
-        "git"
-        "docker"
-        "aws"
-        "fzf"
-      ];
+    };
+    syntaxHighlighting = {
+      enable = true;
+    };
+    historySubstringSearch = {
+      enable = true;
+    };
+    history = {
+      expireDuplicatesFirst = true;
+      extended = true;
+      ignoreAllDups = true;
+      ignoreSpace = true;
     };
     localVariables = {
       PATH = builtins.concatStringsSep ":" [
@@ -265,28 +265,43 @@ in
       MANPAGER = "nvim +Man!";
       AWS_PAGER = "";
       TF_PLUGIN_CACHE_DIR = "$HOME/.cache/terraform";
-      TERRAGRUNT_PROVIDER_CACHE = 1;
+      HISTORY_SUBSTRING_SEARCH_PREFIXED = "1";
     };
     shellAliases = {
       hm = "home-manager";
       tmux = "tmux -u";
       lg = "lazygit";
+      lzd = "lazydocker";
       cat = "bat -pp";
       catt = "bat";
       cp = "cp -i";
       mv = "mv -i";
       rm = "rm -i";
       fdd = "fd --type directory --search-path `git rev-parse --show-toplevel` | fzf";
-      awslocal = "aws --endpoint-url http://localhost:4566";
+      awslocal = "aws --profile local";
       sso = "aws sso login --sso-session sso";
       tailscale = "/Applications/Tailscale.app/Contents/MacOS/Tailscale";
-      golangci-update = "${config.home.homeDirectory}/.nix-profile/bin/curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(${config.home.homeDirectory}/.nix-profile/bin/go env GOPATH)/bin";
       mclidev = "go build -C ~/opt/cloud/mcli -o mcli main.go && ~/opt/cloud/mcli/mcli";
       gopro = "export GORELEASER_KEY=$(op item get Goreleaser --fields \"label=license key\")";
     };
     initExtra = ''
-      # 1password
-      eval "$(op completion zsh)"; compdef _op op
+      WORDCHARS=""
+
+      autoload -Uz bashcompinit && bashcompinit
+      complete -C 'aws_completer' aws
+
+      zstyle ':completion:*' menu select
+
+      bindkey -M emacs '^[[H' beginning-of-line
+      bindkey -M emacs '^[[F' end-of-line
+      bindkey -M emacs '^[[1;5C' forward-word
+      bindkey -M emacs '^[[1;5D' backward-word
+      bindkey -M emacs '^[[3~' delete-char
+
+      alias -g ...='../..'
+      alias -g ....='../../..'
+      alias -g .....='../../../..'
+      alias -g ......='../../../../..'
 
       # custom scripts
       ${builtins.readFile ./apps/zsh/scripts.sh}
@@ -294,6 +309,31 @@ in
       # custom secret scripts
       ${builtins.readFile ./secrets/zsh/scripts.sh}
     '';
+    plugins = [
+      {
+        name = "pure";
+        src = pkgs.fetchFromGitHub {
+          owner = "sindresorhus";
+          repo = "pure";
+          rev = "v1.23.0";
+          sha256 = "1jcb5cg1539iy89vm9d59g8lnp3dm0yv88mmlhkp9zwx3bihwr06";
+        };
+      }
+      {
+        name = "docker";
+        src = pkgs.fetchFromGitHub {
+          owner = "greymd";
+          repo = "docker-zsh-completion";
+          rev = "69560d170ac8082d6086bba9b1691a4a024c32bd";
+          sha256 = "0d8jq8vf4zimwfgr22w5q6bkg26bbqfki1x1fmf28jsic58lz9j9";
+        };
+      }
+    ];
+  };
+
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
   };
 
   home.file = {
@@ -302,12 +342,26 @@ in
     ".config/lazygit/config.yml".source = config.lib.file.mkOutOfStoreSymlink ./apps/lazygit/config.yml;
     ".config/bat/config".source = config.lib.file.mkOutOfStoreSymlink ./apps/bat/config;
     ".config/wezterm".source = config.lib.file.mkOutOfStoreSymlink ./apps/wezterm;
+    ".config/git/commit".text = ''
+      # feat: (new feature for the user, not a new feature for build script)
+      # fix: (bug fix for the user, not a fix to a build script)
+      # docs: (changes to the documentation)
+      # style: (formatting, missing semi colons, etc; no production code change)
+      # refactor: (refactoring production code, eg. renaming a variable)
+      # test: (adding missing tests, refactoring tests; no production code change)
+      # chore: (updating grunt tasks etc; no production code change)
+
+      # Why?
+      # - ...
+      #
+      # What?
+      # - ...
+    '';
 
     # secrets
     "intelephense/licence.txt".source = config.lib.file.mkOutOfStoreSymlink ./secrets/intelephense.txt;
     ".aws/config".source = config.lib.file.mkOutOfStoreSymlink ./secrets/aws/config;
     ".aws/credentials".source = config.lib.file.mkOutOfStoreSymlink ./secrets/aws/credentials;
     ".ssh/config".source = config.lib.file.mkOutOfStoreSymlink ./secrets/ssh/config;
-    ".netrc".source = config.lib.file.mkOutOfStoreSymlink ./secrets/netrc;
   };
 }
