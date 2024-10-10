@@ -12,8 +12,6 @@ config.bold_brightens_ansi_colors = "BrightAndBold"
 config.default_cursor_style = "BlinkingBar"
 config.cursor_blink_ease_in = "Constant"
 config.cursor_blink_ease_out = "Constant"
-config.front_end = "WebGpu"
-config.webgpu_power_preference = "HighPerformance"
 config.inactive_pane_hsb = {
 	brightness = 0.7,
 }
@@ -41,6 +39,7 @@ config.use_dead_keys = false
 config.keys = {
 	{ key = "d", mods = "CMD", action = wezterm.action.SplitHorizontal },
 	{ key = "D", mods = "CMD", action = wezterm.action.SplitVertical },
+	{ key = "Enter", mods = "ALT", action = wezterm.action.DisableDefaultAssignment },
 }
 
 config.mouse_bindings = {
