@@ -109,7 +109,7 @@ in
     jq
     k9s
     kubectl
-    lazygit
+    unstable.lazygit
     monaspace
     mysql80
     # neovim-nightly
@@ -262,10 +262,12 @@ in
     };
     sessionVariables = {
       DOCKER_BUILDKIT = 1;
+      PURE_GIT_PULL = 0;
       MANPAGER = "nvim +Man!";
       AWS_PAGER = "";
       TF_PLUGIN_CACHE_DIR = "$HOME/.cache/terraform";
       HISTORY_SUBSTRING_SEARCH_PREFIXED = "1";
+      RIPGREP_CONFIG_PATH = "$HOME/.config/ripgrep/config";
     };
     shellAliases = {
       hm = "home-manager";
@@ -356,6 +358,11 @@ in
       #
       # What?
       # - ...
+    '';
+    ".config/ripgrep/config".text = ''
+      --hidden
+      --glob=!.git/*
+      --smart-case
     '';
 
     # secrets
