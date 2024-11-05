@@ -22,7 +22,7 @@
 
 [gpg]
 	format = "ssh"
-	program = "/nix/store/w4w0jvrpdcs55grnms3nhd50nb602wjm-gnupg-2.4.5/bin/gpg2"
+	program = "/opt/homebrew/bin/gpg"
 
 [gpg "ssh"]
 	allowedSignersFile = "~/.ssh/allowed_signers"
