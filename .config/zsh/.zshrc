@@ -62,6 +62,7 @@ export PATH="$PATH:$GOPATH/bin"
 export PATH="$PATH:$HOME/.local/bin"
 export PATH="$PATH:/Applications/WezTerm.app/Contents/MacOS"
 
+export EDITOR="nvim"
 export DOCKER_BUILDKIT=1
 export PURE_GIT_PULL=0
 export MANPAGER="nvim +Man!"
@@ -69,13 +70,13 @@ export AWS_PAGER=""
 export HISTORY_SUBSTRING_SEARCH_PREFIXED="1"
 export TERRAGRUNT_PROVIDER_CACHE="1"
 
-export ZDOTDIR=$XDG_CONFIG_HOME/zsh
+export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 export TF_PLUGIN_CACHE_DIR="$XDG_CACHE_HOME/terraform"
 export TF_CLI_CONFIG_FILE="$XDG_CONFIG_HOME/terraform/config.tfrc"
 export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/config"
 export HOMEBREW_BUNDLE_FILE="$XDG_CONFIG_HOME/brewfile/Brewfile"
 
-export GOPATH="$XDG_DATA_HOME/opt/go"
+export GOPATH="$XDG_DATA_HOME/go"
 export GOPRIVATE="gitlab.shopware.com"
 
 # Aliases
@@ -83,6 +84,7 @@ alias -g ...='../..'
 alias -g ....='../../..'
 alias -g .....='../../../..'
 alias -g ......='../../../../..'
+
 alias ls="eza"
 alias hm="home-manager"
 alias tmux="tmux -u"
