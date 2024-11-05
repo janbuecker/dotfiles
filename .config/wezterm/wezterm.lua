@@ -1,7 +1,7 @@
 local wezterm = require("wezterm")
 local config = wezterm.config_builder()
 
-config.default_prog = { wezterm.home_dir .. "/.nix-profile/bin/zsh" }
+config.default_prog = { "/opt/homebrew/bin/zsh" }
 config.font_size = 20
 config.pane_focus_follows_mouse = true
 config.window_decorations = "RESIZE"

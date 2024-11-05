@@ -1,0 +1,53 @@
+[alias]
+	amend = "commit --amend --reuse-message=HEAD"
+	rs = "restore --staged"
+
+[commit]
+	gpgSign = true
+	template = "~/.config/git/commit"
+
+[credential]
+	helper = "cache --timeout 21600"
+	helper = "oauth"
+
+[credential "https://gitlab.shopware.com"]
+	oauthAuthURL = "/oauth/authorize"
+	oauthClientId = "27dbdada9445855de26ad7fd4f3f0e0eb30f31ee618cdbcc2987d3ba652e6f6d"
+	oauthScopes = "read_repository write_repository"
+	oauthTokenURL = "/oauth/token"
+    oauthDeviceAuthURL = "/oauth/authorize_device"
+
+[fetch]
+	prune = true
+
+[gpg]
+	format = "ssh"
+	program = "/nix/store/w4w0jvrpdcs55grnms3nhd50nb602wjm-gnupg-2.4.5/bin/gpg2"
+
+[gpg "ssh"]
+	allowedSignersFile = "~/.ssh/allowed_signers"
+	program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+
+[init]
+	defaultBranch = "main"
+
+[pull]
+	rebase = true
+
+[push]
+	autoSetupRemote = true
+	default = "simple"
+
+[tag]
+	gpgSign = true
+
+[url "https://github.com/"]
+	insteadOf = "git@github.com:"
+
+[url "https://gitlab.shopware.com/"]
+	insteadOf = "git@gitlab.shopware.com:"
+
+[user]
+	email = "j.buecker@shopware.com"
+	name = "Jan Bücker"
+	signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJlKV62/B496z2BR02s2HKI62QlDaPeXCbyDrs2TWODw"

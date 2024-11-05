@@ -2,41 +2,43 @@
 
 This repository contains my workstation configuration and can be restored using the setup below.
 
-### 1. Install nix + home-manager
+### 1. Clone this repository to `$HOME/dotfiles`
+
+Dealing with a bare repository with a working tree in `$HOME`. The alias helps with some commands.
+
+The config option hides all untracked files in `$HOME`, so git status is actually usable.
 
 ```bash
-sh <(curl -L https://nixos.org/nix/install)
+git clone --bare https://github.com/janbuecker/dotfiles.git $HOME/dotfiles
 
-nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
-nix-channel --add https://nixos.org/channels/nixos-unstable unstable
-nix-channel --update
-
-# if not on NixOS
-export NIX_PATH=$HOME/.nix-defexpr/channels:/nix/var/nix/profiles/per-user/root/channels${NIX_PATH:+:$NIX_PATH}
-
-nix-shell '<home-manager>' -A install
+alias config='git --git-dir=$HOME/dotfiles/ --work-tree=$HOME'
+config checkout
+config config --local status.showUntrackedFiles no
 ```
 
-### 2. Clone this repository to `.config/home-manager/`
+### 2. Install homebrew and packages
 
 ```bash
-rm -rf .config/home-manager/
-git clone https://github.com/janbuecker/dotfiles.git .config/home-manager/
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+eval "$(/opt/homebrew/bin/brew shellenv)"
+# eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" # for linux
+
+brew bundle --file .config/brewfile/Brewfile
 ```
 
-### 3. Switch first generation
-
-Run home-manager for the first time with this configuration
-
-```bash
-home-manager switch
-```
-
-### 4. Decrypt secrets
+### 3. Decrypt secrets
 
 The de/encryption requires the unlock key.
 
 ```bash
 # 1password
-op document get gitcrypt --force | git-crypt unlock -
+op document get gitcrypt --force | config crypt unlock -
+
+# key file
+config crypt unlock gitcrypt.key
 ```
+
+### 4. Restart shell (zsh)
+
+Enviroment should be ready to be used after restarting the shell (zsh).

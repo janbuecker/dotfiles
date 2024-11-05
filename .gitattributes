@@ -1,1 +1,5 @@
-/secrets/** filter=git-crypt diff=git-crypt
+/.aws/config filter=git-crypt diff=git-crypt
+/.aws/credentials filter=git-crypt diff=git-crypt
+/intelephense/** filter=git-crypt diff=git-crypt
+/.ssh/config filter=git-crypt diff=git-crypt
+/.config/zsh/scripts.private.d/** filter=git-crypt diff=git-crypt
