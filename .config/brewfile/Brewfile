@@ -3,6 +3,7 @@ tap "shivammathur/php"
 tap "shivammathur/extensions"
 tap "hashicorp/tap"
 tap "nats-io/homebrew-nats-tools"
+tap "blackfireio/homebrew-blackfire"
 
 # casks
 cask "1password-cli"
@@ -78,3 +79,4 @@ brew "zsh-history-substring-search"
 brew "zsh-syntax-highlighting"
 brew "pure"
 brew "gpg2"
+brew "blackfireio/homebrew-blackfire/blackfire"

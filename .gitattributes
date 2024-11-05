@@ -3,3 +3,4 @@
 /.config/intelephense/** filter=git-crypt diff=git-crypt
 /.ssh/config filter=git-crypt diff=git-crypt
 /.config/zsh/scripts.private.d/** filter=git-crypt diff=git-crypt
+/.config/.blackfire.ini filter=git-crypt diff=git-crypt

@@ -2775,6 +2775,10 @@
             }
           }
         }
+      },
+      "blackfireio/blackfire/blackfire": {
+        "version": "2.28.17",
+        "bottle": false
       }
     },
     "cask": {
@@ -2815,13 +2819,16 @@
       },
       "nats-io/nats-tools": {
         "revision": "ed38a301acb3e973a2bd5d8fd522afc3ec52b942"
+      },
+      "blackfireio/blackfire": {
+        "revision": "fccc215e97c4d5433852f1c883ca83875aa6bd7b"
       }
     }
   },
   "system": {
     "macos": {
       "sequoia": {
-        "HOMEBREW_VERSION": "4.4.3",
+        "HOMEBREW_VERSION": "4.4.4",
         "HOMEBREW_PREFIX": "/opt/homebrew",
         "Homebrew/homebrew-core": "api",
         "CLT": "16.1.0.0.1.1729049160",
