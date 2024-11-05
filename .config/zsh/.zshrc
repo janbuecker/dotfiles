@@ -71,6 +71,7 @@ export TERRAGRUNT_PROVIDER_CACHE="1"
 
 export ZDOTDIR=$XDG_CONFIG_HOME/zsh
 export TF_PLUGIN_CACHE_DIR="$XDG_CACHE_HOME/terraform"
+export TF_CLI_CONFIG_FILE="$XDG_CONFIG_HOME/terraform/config.tfrc"
 export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/config"
 export HOMEBREW_BUNDLE_FILE="$XDG_CONFIG_HOME/brewfile/Brewfile"
 
