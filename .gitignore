@@ -1,3 +1,5 @@
 .config/zsh/.zsh_sessions
 .config/intelephense/*
 !.config/intelephense/licence.txt
+.config/zsh/.zcompdump
+.config/zsh/.zcompcache

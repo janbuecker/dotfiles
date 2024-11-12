@@ -1,5 +1,11 @@
 cdp() {
-    cd $(~/bin/dir_select "$@")
+    if [ "$1" = "" ]; then
+        p=$(find ~/opt/cloud -maxdepth 1 -type d | fzf)
+    else
+        p=$(find ~/opt/cloud -maxdepth 1 -type d | fzf -1 -q "$@")
+    fi
+
+    cd "$p" || return
 }
 
 mfa() {

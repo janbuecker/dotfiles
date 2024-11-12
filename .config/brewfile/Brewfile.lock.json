@@ -2792,7 +2792,7 @@
         "revision": "fb0d6cd0a268b842a31f3953ecf04e31200f102a"
       },
       "shivammathur/extensions": {
-        "revision": "7a95686d80dad4fea38784a5159ff31acb1db7bd"
+        "revision": "8d80a26f05bf11135a3d343540fba4484d7947db"
       },
       "hashicorp/tap": {
         "revision": "6a087f71510c0e28b0e90f9ab20d7787e2bfae73"
@@ -2811,7 +2811,7 @@
   "system": {
     "macos": {
       "sequoia": {
-        "HOMEBREW_VERSION": "4.4.5-2-g1cb90c6",
+        "HOMEBREW_VERSION": "4.4.5-4-gacb3675",
         "HOMEBREW_PREFIX": "/opt/homebrew",
         "Homebrew/homebrew-core": "api",
         "CLT": "16.1.0.0.1.1729049160",
