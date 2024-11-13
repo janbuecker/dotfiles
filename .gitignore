@@ -3,3 +3,4 @@
 !.config/intelephense/licence.txt
 .config/zsh/.zcompdump
 .config/zsh/.zcompcache
+.config/aws/**/cache/

@@ -78,8 +78,13 @@ export TF_PLUGIN_CACHE_DIR="$XDG_CACHE_HOME/terraform"
 export TF_CLI_CONFIG_FILE="$XDG_CONFIG_HOME/terraform/config.tfrc"
 export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/config"
 export HOMEBREW_BUNDLE_FILE="$XDG_CONFIG_HOME/brewfile/Brewfile"
+export DOCKER_CONFIG="$XDG_CONFIG_HOME"/docker
+export COMPOSER_HOME="$XDG_CONFIG_HOME"/composer
+export AWS_CONFIG_FILE="$XDG_CONFIG_HOME"/aws/config
 
-export GOPATH="$XDG_DATA_HOME/go"
+export GOPATH="$XDG_DATA_HOME"/go
+export GOCACHE="$XDG_CACHE_HOME"/go-build
+export GOMODCACHE="$XDG_CACHE_HOME"/go/mod
 export GOPRIVATE="gitlab.shopware.com"
 
 # Aliases
