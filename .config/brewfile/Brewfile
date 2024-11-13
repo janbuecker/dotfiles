@@ -12,6 +12,7 @@ cask "session-manager-plugin"
 cask "mysql-shell"
 cask "wezterm"
 cask "tailscale"
+cask "microsoft-teams"
 
 # brews
 brew "awscli"
