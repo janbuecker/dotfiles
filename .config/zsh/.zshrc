@@ -1,3 +1,9 @@
+# XDG config
+export XDG_CACHE_HOME=$HOME/.cache
+export XDG_CONFIG_HOME=$HOME/.config
+export XDG_DATA_HOME=$HOME/.local/share
+export XDG_STATE_HOME=$HOME/.local/state
+
 # initialize shell with brew
 if [[ $(uname) == "Darwin" ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
@@ -15,8 +21,13 @@ bindkey -e
 autoload -U promptinit; promptinit
 prompt pure
 
+# Completion files: Use XDG dirs
+[ -d "$XDG_CACHE_HOME"/zsh ] || mkdir -p "$XDG_CACHE_HOME"/zsh
+zstyle ':completion:*' cache-path "$XDG_CACHE_HOME"/zsh/zcompcache
+zstyle ':completion:*' menu select
+
 # load plugins
-autoload -U compinit && compinit
+autoload -U compinit && compinit -d "$XDG_CACHE_HOME"/zsh/zcompdump-$ZSH_VERSION
 source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source $HOMEBREW_PREFIX/share/zsh-history-substring-search/zsh-history-substring-search.zsh
@@ -24,7 +35,7 @@ source $HOMEBREW_PREFIX/share/zsh-history-substring-search/zsh-history-substring
 # History options
 HISTSIZE="10000"
 SAVEHIST="10000"
-HISTFILE="$HOME/.zsh_history"
+HISTFILE="$XDG_STATE_HOME"/zsh/history
 mkdir -p "$(dirname "$HISTFILE")"
 
 setopt HIST_FCNTL_LOCK
@@ -39,8 +50,6 @@ setopt autocd
 # keymap
 WORDCHARS=""
 
-zstyle ':completion:*' menu select
-
 bindkey -M emacs '^[[H' beginning-of-line
 bindkey -M emacs '^[[F' end-of-line
 bindkey -M emacs '^[[1;5C' forward-word
@@ -48,12 +57,6 @@ bindkey -M emacs '^[[1;5D' backward-word
 bindkey -M emacs '^[[3~' delete-char
 bindkey "^[[A" history-substring-search-up
 bindkey "^[[B" history-substring-search-down
-
-# XDG config
-export XDG_CACHE_HOME=$HOME/.cache
-export XDG_CONFIG_HOME=$HOME/.config
-export XDG_DATA_HOME=$HOME/.local/share
-export XDG_STATE_HOME=$HOME/.local/state
 
 # Add paths
 export PATH="$PATH:$HOME/bin"
@@ -97,7 +100,7 @@ alias mv="mv -i"
 alias rm="rm -i"
 alias awslocal="aws --profile local"
 alias sso="aws sso login --sso-session sso"
-alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
+# alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
 alias mclidev="go build -C ~/opt/cloud/mcli -o mcli main.go && ~/opt/cloud/mcli/mcli"
 
 # dotfiles
