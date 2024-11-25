@@ -20,6 +20,10 @@ bindkey -e
 # init prompt pure
 autoload -U promptinit; promptinit
 prompt pure
+precmd_awsprofile() {
+	RPROMPT="%F{$prompt_pure_colors[git:branch]}${AWS_PROFILE}%f"
+}
+add-zsh-hook precmd precmd_awsprofile
 
 # Completion files: Use XDG dirs
 [ -d "$XDG_CACHE_HOME"/zsh ] || mkdir -p "$XDG_CACHE_HOME"/zsh

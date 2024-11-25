@@ -5,7 +5,7 @@ awsume() {
         awsumeprofiles=$(aws configure list-profiles)
     fi
 
-    export AWS_PROFILE=$(echo "$awsumeprofiles" | fzf -1 -q "$*")
+    export AWS_PROFILE=$(echo "$awsumeprofiles" | fzf --header "Current profile: $AWS_PROFILE" -1 -q "$*")
     echo "Switched to profile: $AWS_PROFILE"
 }
 
