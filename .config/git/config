@@ -6,17 +6,6 @@
 	gpgSign = true
 	template = "~/.config/git/commit"
 
-[credential]
-	helper = "cache --timeout 21600"
-	helper = "oauth"
-
-[credential "https://gitlab.shopware.com"]
-	oauthAuthURL = "/oauth/authorize"
-	oauthClientId = "27dbdada9445855de26ad7fd4f3f0e0eb30f31ee618cdbcc2987d3ba652e6f6d"
-	oauthScopes = "read_repository write_repository"
-	oauthTokenURL = "/oauth/token"
-    oauthDeviceAuthURL = "/oauth/authorize_device"
-
 [fetch]
 	prune = true
 
@@ -43,9 +32,6 @@
 
 [url "https://github.com/"]
 	insteadOf = "git@github.com:"
-
-[url "https://gitlab.shopware.com/"]
-	insteadOf = "git@gitlab.shopware.com:"
 
 [user]
 	email = "j.buecker@shopware.com"

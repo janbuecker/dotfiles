@@ -1,0 +1,30 @@
+theme = Catppuccin Mocha
+font-size = 16
+font-feature = -calt
+macos-option-as-alt = true
+
+background-opacity = 0.98
+unfocused-split-opacity = 0.7
+split-divider-color = #9399b2
+window-new-tab-position = end
+
+cursor-style = block
+cursor-style-blink = false
+cursor-invert-fg-bg = false
+cursor-text = #1e1e2e
+
+focus-follows-mouse = true
+mouse-scroll-multiplier = 0.5
+
+window-padding-x = 14
+window-padding-y = 14
+
+shell-integration-features = cursor,sudo,no-title,ssh-env,ssh-terminfo
+
+keybind = alt+ctrl+h=previous_tab
+keybind = alt+ctrl+l=next_tab
+keybind = ctrl+cmd+h=goto_split:left
+keybind = ctrl+cmd+l=goto_split:right
+keybind = ctrl+cmd+j=goto_split:down
+keybind = ctrl+cmd+k=goto_split:up
+keybind = shift+enter=text:\x1b\r

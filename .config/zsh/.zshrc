@@ -62,7 +62,14 @@ bindkey -M emacs '^[[3~' delete-char
 bindkey "^[[A" history-substring-search-up
 bindkey "^[[B" history-substring-search-down
 
+# setup go
+export GOPATH="$XDG_DATA_HOME"/go
+export GOCACHE="$XDG_CACHE_HOME"/go-build
+export GOMODCACHE="$XDG_CACHE_HOME"/go/mod
+export GOPRIVATE="github.com/shopware-saas"
+
 # Add paths
+export PATH="$(brew --prefix python@3.12)/bin:$PATH"
 export PATH="$PATH:$HOME/bin"
 export PATH="$PATH:/usr/local/bin"
 export PATH="$PATH:$GOPATH/bin"
@@ -75,7 +82,10 @@ export PURE_GIT_PULL=0
 export MANPAGER="nvim +Man!"
 export AWS_PAGER=""
 export HISTORY_SUBSTRING_SEARCH_PREFIXED="1"
-export TERRAGRUNT_PROVIDER_CACHE="1"
+export TG_PROVIDER_CACHE="1"
+export TG_PROVIDER_CACHE_DIR="$XDG_CACHE_HOME/terragrunt"
+#export OPENAI_API_BASE="https://api.githubcopilot.com"
+#export OPENAI_API_KEY="$(jq -r 'to_entries[0].value.oauth_token' ~/.config/github-copilot/apps.json)"
 
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 export TF_PLUGIN_CACHE_DIR="$XDG_CACHE_HOME/terraform"
@@ -86,31 +96,37 @@ export DOCKER_CONFIG="$XDG_CONFIG_HOME"/docker
 export COMPOSER_HOME="$XDG_CONFIG_HOME"/composer
 export AWS_CONFIG_FILE="$XDG_CONFIG_HOME"/aws/config
 
-export GOPATH="$XDG_DATA_HOME"/go
-export GOCACHE="$XDG_CACHE_HOME"/go-build
-export GOMODCACHE="$XDG_CACHE_HOME"/go/mod
-export GOPRIVATE="gitlab.shopware.com"
-
 # Aliases
 alias -g ...='../..'
 alias -g ....='../../..'
 alias -g .....='../../../..'
 alias -g ......='../../../../..'
 
-alias ls="eza"
-alias hm="home-manager"
 alias tmux="tmux -u"
 alias lg="lazygit"
-alias lzd="lazydocker"
 alias cat="bat -pp"
 alias catt="bat"
-alias cp="cp -i"
-alias mv="mv -i"
-alias rm="rm -i"
 alias awslocal="aws --profile local"
 alias sso="aws sso login --sso-session sso"
 # alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
 alias mclidev="go build -C ~/opt/cloud/mcli -o mcli main.go && ~/opt/cloud/mcli/mcli"
+
+# File system
+alias ls='eza --group-directories-first'
+alias lsa='ls -a'
+alias lt='eza --tree --level=2 --long --icons --git'
+alias lta='lt -a'
+alias ff="fzf --preview 'bat --style=numbers --color=always {}'"
+alias cd="zd"
+zd() {
+  if [ $# -eq 0 ]; then
+    builtin cd ~ && return
+  elif [ -d "$1" ]; then
+    builtin cd "$1"
+  else
+    z "$@" && printf "\U000F17A9 " && pwd || echo "Error: Directory not found"
+  fi
+}
 
 # dotfiles
 alias config="git --git-dir=$HOME/dotfiles/ --work-tree=$HOME"
@@ -118,4 +134,10 @@ alias config="git --git-dir=$HOME/dotfiles/ --work-tree=$HOME"
 # custom scripts
 for f in $XDG_CONFIG_HOME/zsh/scripts.d/*; do source $f; done
 for f in $XDG_CONFIG_HOME/zsh/scripts.private.d/*; do source $f; done
+
+
+. "$HOME/.local/share/../bin/env"
+
+export _ZO_DATA_DIR="$XDG_DATA_HOME"
+eval "$(zoxide init zsh)"
 

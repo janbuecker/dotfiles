@@ -7,6 +7,12 @@ awsume() {
 
     export AWS_PROFILE=$(echo "$awsumeprofiles" | fzf --header "Current profile: $AWS_PROFILE" -1 -q "$*")
     echo "Switched to profile: $AWS_PROFILE"
+
+    # Try a quick API call to check if authenticated
+    if ! aws configure export-credentials --profile "$AWS_PROFILE" &>/dev/null; then
+        echo "Authentication required..."
+        aws sso login --sso-session sso
+    fi
 }
 
 ecsconnect() {

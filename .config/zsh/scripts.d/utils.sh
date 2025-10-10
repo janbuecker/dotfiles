@@ -25,3 +25,28 @@ cdenv() {
         cd $(pwd | sed 's!/production/!/staging/!')
     fi
 }
+
+cdop() {
+    local dir="$PWD"
+    while [[ "$dir" != "/" ]]; do
+        if [[ -d "$dir/outpost" ]]; then
+            current=$dir
+            break
+        fi
+        dir=$(dirname "$dir")
+    done
+
+    if [[ "$dir" == "/" ]]; then
+        echo "No outpost directory found"
+        return 1
+    fi
+
+    local base="$dir/outpost"
+    local new=$(ls "$base" | fzf)
+    local rel="${PWD#"$base"/}"
+    local rest="${rel#*/}"
+    local target="$base/$new"
+    [[ -n "$rest" ]] && target="$target/$rest"
+
+    cd "$target" || return
+}
