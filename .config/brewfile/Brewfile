@@ -78,6 +78,7 @@ brew "wireguard-go"
 brew "wireguard-tools"
 brew "zip"
 brew "zstd"
+brew "zoxide"
 
 # zsh and plugins
 brew "zsh"
