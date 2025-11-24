@@ -110,6 +110,7 @@ alias awslocal="aws --profile local"
 alias sso="aws sso login --sso-session sso"
 # alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
 alias mclidev="go build -C ~/opt/cloud/mcli -o mcli main.go && ~/opt/cloud/mcli/mcli"
+alias claude="$HOME/.claude/local/claude"
 
 # File system
 alias ls='eza --group-directories-first'

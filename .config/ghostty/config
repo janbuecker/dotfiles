@@ -10,7 +10,6 @@ window-new-tab-position = end
 
 cursor-style = block
 cursor-style-blink = false
-cursor-invert-fg-bg = false
 cursor-text = #1e1e2e
 
 focus-follows-mouse = true
