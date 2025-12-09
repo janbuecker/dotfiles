@@ -20,6 +20,12 @@ cask "visual-studio-code"
 cask "whatsapp"
 cask "tailscale-app"
 cask "codex"
+cask "slack"
+
+# app store apps
+mas "Magnet", id: 441258766
+mas "Infuse", id: 1136220934
+mas "WireGuard", id: 1451685025
 
 # brews
 brew "awscli"
@@ -58,6 +64,7 @@ brew "k6"
 brew "keidarcy/tap/e1s"
 brew "lazygit"
 brew "libpq", link: true
+brew "mas"
 brew "mysql-client"
 brew "nats-io/homebrew-nats-tools/nats"
 brew "neovim", args: ["--HEAD"]
