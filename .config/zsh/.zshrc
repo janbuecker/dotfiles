@@ -104,6 +104,7 @@ alias -g ......='../../../../..'
 
 alias tmux="tmux -u"
 alias lg="lazygit"
+alias lgdot="lg -w $HOME -g $HOME/dotfiles/"
 alias cat="bat -pp"
 alias catt="bat"
 alias awslocal="aws --profile local"
