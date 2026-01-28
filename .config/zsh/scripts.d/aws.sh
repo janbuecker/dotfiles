@@ -145,3 +145,53 @@ cognito() {
         fi
     done
 }
+
+metastore() {
+    echo "Starting ElasticVue with metastore clusters..."
+    CONTAINER_NAME=elasticvue
+    clusters=''
+    for env in prod staging; do
+        echo " - Adding metastore-$env"
+        endpoint=$(aws opensearch describe-domain --profile controlplane_$env --domain-name global-metastore --output text --query 'DomainStatus.Endpoint')
+        creds=$(aws configure export-credentials --profile controlplane_$env)
+        accessKey=$(echo "$creds" | jq -r '.AccessKeyId')
+        secretKey=$(echo "$creds" | jq -r '.SecretAccessKey')
+        sessionToken=$(echo "$creds" | jq -r '.SessionToken')
+
+        clusters+='{"name": "metastore-'$env'", "uri": "https://'$endpoint'", "S3accessKeyId":"'$accessKey'", "S3secretAccessKey":"'$secretKey'", "S3sessionToken":"'$sessionToken'", "S3region":"eu-central-1" },'
+    done
+
+    echo "Launching ElasticVue..."
+    docker pull cars10/elasticvue
+
+    docker rm -f ${CONTAINER_NAME} >/dev/null 2>&1 || true
+
+    port=$(python3 -c 'import socket; s=socket.socket(); s.bind(("",0)); print(s.getsockname()[1]); s.close()')
+    docker run \
+        --rm \
+        --name ${CONTAINER_NAME} \
+        -p ${port}:8080 \
+        -e ELASTICVUE_CLUSTERS='['"${clusters::-1}"']' \
+        cars10/elasticvue &
+
+    DOCKER_PID=$!
+
+    cleanup() {
+        echo
+        echo "Stopping ${CONTAINER_NAME}..."
+        # ask docker to stop gracefully; if that fails, kill the docker run process
+        docker stop "${CONTAINER_NAME}" >/dev/null 2>&1 || kill -TERM "${DOCKER_PID}" 2>/dev/null || true
+        # wait for the backgrounded docker run to exit
+        wait "${DOCKER_PID}" 2>/dev/null || true
+    }
+    trap cleanup INT TERM
+
+    sleep 1
+
+    echo "ElasticVue is running at http://localhost:${port}"
+    open "http://localhost:${port}"
+
+    wait "${DOCKER_PID}"
+
+    trap - INT TERM
+}

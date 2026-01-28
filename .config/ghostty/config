@@ -3,7 +3,6 @@ font-size = 16
 font-feature = -calt
 macos-option-as-alt = true
 
-background-opacity = 0.98
 unfocused-split-opacity = 0.7
 split-divider-color = #9399b2
 window-new-tab-position = end
@@ -22,8 +21,8 @@ shell-integration-features = cursor,sudo,no-title,ssh-env,ssh-terminfo
 
 keybind = alt+ctrl+h=previous_tab
 keybind = alt+ctrl+l=next_tab
-keybind = ctrl+cmd+h=goto_split:left
-keybind = ctrl+cmd+l=goto_split:right
-keybind = ctrl+cmd+j=goto_split:down
-keybind = ctrl+cmd+k=goto_split:up
+keybind = ctrl+shift+left=goto_split:left
+keybind = ctrl+shift+right=goto_split:right
+keybind = ctrl+shift+down=goto_split:down
+keybind = ctrl+shift+up=goto_split:up
 keybind = shift+enter=text:\x1b\r

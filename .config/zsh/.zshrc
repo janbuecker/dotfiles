@@ -111,7 +111,7 @@ alias awslocal="aws --profile local"
 alias sso="aws sso login --sso-session sso"
 # alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
 alias mclidev="go build -C ~/opt/cloud/mcli -o mcli main.go && ~/opt/cloud/mcli/mcli"
-alias claude="$HOME/.claude/local/claude"
+alias today='$EDITOR ~/today.md'
 
 # File system
 alias ls='eza --group-directories-first'
@@ -135,7 +135,20 @@ alias config="git --git-dir=$HOME/dotfiles/ --work-tree=$HOME"
 
 # custom scripts
 for f in $XDG_CONFIG_HOME/zsh/scripts.d/*; do source $f; done
-for f in $XDG_CONFIG_HOME/zsh/scripts.private.d/*; do source $f; done
+
+# source private scripts only if they're decrypted (text files)
+for f in $XDG_CONFIG_HOME/zsh/scripts.private.d/*; do
+  # skip if not a regular file
+  [[ -f "$f" ]] || continue
+
+  # check if file appears to be encrypted (contains null bytes = binary)
+  if grep -q $'\x00' "$f" 2>/dev/null; then
+    # file is likely encrypted, skip silently
+    continue
+  fi
+
+  source "$f"
+done
 
 
 . "$HOME/.local/share/../bin/env"
@@ -143,3 +156,8 @@ for f in $XDG_CONFIG_HOME/zsh/scripts.private.d/*; do source $f; done
 export _ZO_DATA_DIR="$XDG_DATA_HOME"
 eval "$(zoxide init zsh)"
 
+if [ -f ~/today.md ] && [ -s ~/today.md ]; then
+    echo "\n\033[1;36m📋 Today's tasks:\033[0m"
+    cat ~/today.md
+    echo ""
+fi
