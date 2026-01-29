@@ -141,9 +141,10 @@ for f in $XDG_CONFIG_HOME/zsh/scripts.private.d/*; do
   # skip if not a regular file
   [[ -f "$f" ]] || continue
 
-  # check if file appears to be encrypted (contains null bytes = binary)
-  if grep -q $'\x00' "$f" 2>/dev/null; then
-    # file is likely encrypted, skip silently
+  # check if file is a text file using the file command
+  # encrypted files will be detected as "data" or specific binary formats
+  if ! file -b "$f" | grep -q "text"; then
+    # file is likely encrypted or binary, skip silently
     continue
   fi
 
