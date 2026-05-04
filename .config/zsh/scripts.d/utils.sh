@@ -15,7 +15,19 @@ mfa() {
 }
 
 gopro() {
-    export GORELEASER_KEY=$(op item get Goreleaser --fields "label=license key")
+    local _cache="$TMPDIR/.goreleaser_license"
+    if [[ ! -f "$_cache" ]]; then
+        op item get Goreleaser --fields "label=license key" > "$_cache"
+        chmod 600 "$_cache"
+    fi
+    export GORELEASER_KEY="$(< "$_cache")"
+}
+
+goreleaser() {
+    if [[ -z "$GORELEASER_KEY" ]]; then
+        gopro
+    fi
+    command goreleaser "$@"
 }
 
 cdenv() {
