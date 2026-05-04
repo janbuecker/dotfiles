@@ -16,14 +16,15 @@ cask "obs" if OS.mac?
 cask "session-manager-plugin" if OS.mac?
 cask "signal" if OS.mac?
 cask "stats" if OS.mac?
-cask "visual-studio-code" if OS.mac?
 cask "whatsapp" if OS.mac?
 cask "tailscale-app" if OS.mac?
 cask "slack" if OS.mac?
+cask "shottr" if OS.mac?
 
 cask "1password-cli"
 cask "goreleaser/tap/goreleaser-pro"
 cask "codex"
+cask "claude-code"
 
 # app store apps
 mas "Magnet", id: 441258766 if OS.mac?
@@ -67,10 +68,13 @@ brew "keidarcy/tap/e1s"
 brew "lazygit"
 brew "libpq", link: true
 brew "mas" if OS.mac?
+brew "mkcert"
 brew "mysql-client"
 brew "nats-io/homebrew-nats-tools/nats"
+brew "ncdu"
 brew "neovim", args: ["HEAD"]
 brew "node"
+brew "restic"
 brew "p7zip"
 brew "php-cs-fixer"
 brew "phpstan"
@@ -125,3 +129,6 @@ brew "yamlfix"
 brew "yamllint"
 brew "sqlfmt"
 brew "hashicorp/tap/terraform-ls"
+brew "yazi"
+brew "btop"
+brew "templ"
