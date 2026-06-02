@@ -72,7 +72,7 @@ brew "mkcert"
 brew "mysql-client"
 brew "nats-io/homebrew-nats-tools/nats"
 brew "ncdu"
-brew "neovim", args: ["HEAD"]
+brew "neovim"#, args: ["HEAD"]
 brew "node"
 brew "restic"
 brew "p7zip"
@@ -132,3 +132,4 @@ brew "hashicorp/tap/terraform-ls"
 brew "yazi"
 brew "btop"
 brew "templ"
+brew "go-air"
