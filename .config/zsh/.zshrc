@@ -95,6 +95,7 @@ export HOMEBREW_BUNDLE_FILE="$XDG_CONFIG_HOME/brewfile/Brewfile"
 export DOCKER_CONFIG="$XDG_CONFIG_HOME"/docker
 export COMPOSER_HOME="$XDG_CONFIG_HOME"/composer
 export AWS_CONFIG_FILE="$XDG_CONFIG_HOME"/aws/config
+export GOLANGCI_LINT_CACHE="$XDG_CACHE_HOME"/golangci-lint
 
 # Aliases
 alias -g ...='../..'
@@ -112,6 +113,8 @@ alias sso="aws sso login --sso-session sso"
 # alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
 alias mclidev="go build -C ~/opt/cloud/mcli -o mcli main.go && ~/opt/cloud/mcli/mcli"
 alias today='$EDITOR ~/today.md'
+alias ghcr="docker login ghcr.io --username $(gh config get -h github.com user) --password $(gh config get -h github.com oauth_token)"
+alias tarz="tar --use-compress-program=zstdmt"
 
 # File system
 alias ls='eza --group-directories-first'
