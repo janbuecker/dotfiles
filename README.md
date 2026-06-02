@@ -42,3 +42,15 @@ config crypt unlock gitcrypt.key
 ### 4. Restart shell (zsh)
 
 Enviroment should be ready to be used after restarting the shell (zsh).
+
+### 5. Fine-tuning
+
+Reboot after the changes below are made:
+
+```
+# Drag windows anywhere with ctrl + cmd
+defaults write -g NSWindowShouldDragOnGesture -bool true
+
+# Install us-altgr-intl keyboard layout
+sudo cp $XDG_CONFIG_HOME/us-altgr-intl.keylayout /Library/Keyboard\ Layouts
+```
