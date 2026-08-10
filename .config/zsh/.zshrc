@@ -31,7 +31,19 @@ zstyle ':completion:*' cache-path "$XDG_CACHE_HOME"/zsh/zcompcache
 zstyle ':completion:*' menu select
 
 # load plugins
-autoload -U compinit && compinit -d "$XDG_CACHE_HOME"/zsh/zcompdump-$ZSH_VERSION
+autoload -Uz compinit
+
+ZSH_CONFIG="${ZDOTDIR:-$HOME}/.zshrc"
+ZSH_COMPDUMP="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump-$ZSH_VERSION"
+
+mkdir -p "${ZSH_COMPDUMP:h}"
+
+if [[ -f "$ZSH_COMPDUMP" && "$ZSH_COMPDUMP" -nt "$ZSH_CONFIG" ]]; then
+  compinit -C -d "$ZSH_COMPDUMP"
+else
+  compinit -d "$ZSH_COMPDUMP"
+fi
+
 source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source $HOMEBREW_PREFIX/share/zsh-history-substring-search/zsh-history-substring-search.zsh
@@ -69,7 +81,6 @@ export GOMODCACHE="$XDG_CACHE_HOME"/go/mod
 export GOPRIVATE="github.com/shopware-saas"
 
 # Add paths
-export PATH="$(brew --prefix python@3.12)/bin:$PATH"
 export PATH="$PATH:$HOME/bin"
 export PATH="$PATH:/usr/local/bin"
 export PATH="$PATH:$GOPATH/bin"
@@ -84,8 +95,8 @@ export AWS_PAGER=""
 export HISTORY_SUBSTRING_SEARCH_PREFIXED="1"
 export TG_PROVIDER_CACHE="1"
 export TG_PROVIDER_CACHE_DIR="$XDG_CACHE_HOME/terragrunt"
-#export OPENAI_API_BASE="https://api.githubcopilot.com"
-#export OPENAI_API_KEY="$(jq -r 'to_entries[0].value.oauth_token' ~/.config/github-copilot/apps.json)"
+export FZF_DEFAULT_OPTS="--height='~40%' --layout=reverse --info=inline"
+export GITHUB_TOKEN=$(gh auth token)
 
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 export TF_PLUGIN_CACHE_DIR="$XDG_CACHE_HOME/terraform"
@@ -113,7 +124,7 @@ alias sso="aws sso login --sso-session sso"
 # alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
 alias mclidev="go build -C ~/opt/cloud/mcli -o mcli main.go && ~/opt/cloud/mcli/mcli"
 alias today='$EDITOR ~/today.md'
-alias ghcr="docker login ghcr.io --username $(gh config get -h github.com user) --password $(gh config get -h github.com oauth_token)"
+alias ghcr='docker login ghcr.io --username $(gh config get -h github.com user) --password $(gh config get -h github.com oauth_token)'
 alias tarz="tar --use-compress-program=zstdmt"
 
 # File system
@@ -158,8 +169,4 @@ done
 export _ZO_DATA_DIR="$XDG_DATA_HOME"
 eval "$(zoxide init zsh)"
 
-if [ -f ~/today.md ] && [ -s ~/today.md ]; then
-    echo "\n\033[1;36m📋 Today's tasks:\033[0m"
-    cat ~/today.md
-    echo ""
-fi
+if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi

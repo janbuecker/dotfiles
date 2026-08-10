@@ -99,7 +99,7 @@ cognito() {
     printf '%-14s ' "User Pool ID:"
     poolID=$(aws cognito-idp list-user-pools --max-results 50 --output text --query 'UserPools[].Id' | fzf -1)
     if [ -z "$poolID" ]; then
-        exit 1
+        return 1
     fi
     echo $poolID
 
@@ -188,8 +188,8 @@ metastore() {
 
     sleep 1
 
-    echo "ElasticVue is running at http://localhost:${port}"
-    open "http://localhost:${port}"
+    echo "ElasticVue is running at https://elasticvue.orb.local"
+    open "https://elasticvue.orb.local"
 
     wait "${DOCKER_PID}"
 

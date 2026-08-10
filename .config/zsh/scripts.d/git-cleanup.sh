@@ -10,7 +10,8 @@ git_cleanup() {
     echo "🧹 Starting git branch cleanup..."
 
     # Get the main branch name (could be 'main' or 'master')
-    main_branch=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo "main")
+    main_branch=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
+    main_branch=${main_branch:-main}
     current_branch=$(git branch --show-current)
 
     echo "📍 Main branch: $main_branch"

@@ -1,11 +1,7 @@
 cdp() {
-    if [ "$1" = "" ]; then
-        p=$(find ~/opt/cloud -maxdepth 1 -type d | fzf)
-    else
-        p=$(find ~/opt/cloud -maxdepth 1 -type d | fzf -1 -q "$@")
-    fi
-
-    cd "$p" || return
+    local p
+    p=$(find ~/opt/cloud -mindepth 1 -maxdepth 1 -type d | fzf -1 -q "$*")
+    [[ -n "$p" ]] && cd "$p"
 }
 
 mfa() {
@@ -42,7 +38,6 @@ cdop() {
     local dir="$PWD"
     while [[ "$dir" != "/" ]]; do
         if [[ -d "$dir/outpost" ]]; then
-            current=$dir
             break
         fi
         dir=$(dirname "$dir")
@@ -53,11 +48,26 @@ cdop() {
         return 1
     fi
 
-    local base="$dir/outpost"
-    local new=$(ls "$base" | fzf)
-    local rel="${PWD#"$base"/}"
-    local rest="${rel#*/}"
-    local target="$base/$new"
+    # dir = root/{env}; root is the parent that holds every {env}
+    local root="${dir:h}"
+
+    # rest = path inside the current outpost (after root/{env}/outpost/{outpostID}/)
+    local rel="${PWD#"$dir"/outpost/}"
+    local rest=""
+    [[ "$rel" == */* ]] && rest="${rel#*/}"
+
+    # Collect {env}/{outpostID} for staging + production and pick one
+    local selection
+    selection=$(
+        for env in staging production; do
+            for o in "$root/$env/outpost"/*(/N); do
+                print -r -- "$env/${o:t}"
+            done
+        done | fzf
+    )
+    [[ -z "$selection" ]] && return
+
+    local target="$root/${selection%%/*}/outpost/${selection#*/}"
     [[ -n "$rest" ]] && target="$target/$rest"
 
     cd "$target" || return
