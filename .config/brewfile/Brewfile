@@ -2,6 +2,7 @@ tap "hashicorp/tap", "https://github.com/hashicorp/homebrew-tap", force_auto_upd
 tap "goreleaser/tap", "https://github.com/goreleaser/homebrew-tap", force_auto_update: true, trusted: true
 tap "keidarcy/tap", "https://github.com/keidarcy/homebrew-tap", force_auto_update: true, trusted: true
 tap "shivammathur/php", "https://github.com/shivammathur/homebrew-php", force_auto_update: true, trusted: true
+tap "shivammathur/extensions", "https://github.com/shivammathur/homebrew-extensions", force_auto_update: true, trusted: true
 tap "blackfireio/homebrew-blackfire", "https://github.com/blackfireio/homebrew-blackfire", force_auto_update: true, trusted: true
 tap "nats-io/homebrew-nats-tools", "https://github.com/nats-io/homebrew-nats-tools", force_auto_update: true, trusted: true
 tap "terraform-linters/tap", "https://github.com/terraform-linters/homebrew-tap", force_auto_update: true, trusted: true
@@ -25,7 +26,7 @@ cask "1password-cli"
 cask "goreleaser/tap/goreleaser-pro"
 cask "terraform-linters/tap/tflint"
 cask "codex"
-cask "claude-code"
+cask "claude-code@latest"
 
 # app store apps
 mas "Magnet", id: 441258766 if OS.mac?
@@ -89,7 +90,6 @@ brew "tmux"
 brew "tree"
 brew "tree-sitter"
 brew "tree-sitter-cli"
-brew "unzip"
 brew "watch"
 brew "wget"
 brew "wireguard-go"
@@ -128,7 +128,6 @@ brew "yamlfix"
 brew "yamllint"
 brew "sqlfmt"
 brew "hashicorp/tap/terraform-ls"
-brew "yazi"
 brew "btop"
 brew "templ"
 brew "go-air"
