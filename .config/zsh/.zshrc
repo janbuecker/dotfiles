@@ -76,7 +76,7 @@ bindkey "^[[B" history-substring-search-down
 
 # setup go
 export GOPATH="$XDG_DATA_HOME"/go
-export GOCACHE="$XDG_CACHE_HOME"/go-build
+export GOCACHE="$XDG_CACHE_HOME"/go/build
 export GOMODCACHE="$XDG_CACHE_HOME"/go/mod
 export GOPRIVATE="github.com/shopware-saas"
 
@@ -99,6 +99,7 @@ export FZF_DEFAULT_OPTS="--height='~40%' --layout=reverse --info=inline"
 export GITHUB_TOKEN=$(gh auth token)
 
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
+export _ZO_DATA_DIR="$XDG_DATA_HOME"
 export TF_PLUGIN_CACHE_DIR="$XDG_CACHE_HOME/terraform"
 export TF_CLI_CONFIG_FILE="$XDG_CONFIG_HOME/terraform/config.tfrc"
 export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/config"
@@ -165,8 +166,12 @@ for f in $XDG_CONFIG_HOME/zsh/scripts.private.d/*; do
   source "$f"
 done
 
+# 1Password SSH agent socket for macOS
+_op_sock="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+[ -S "$_op_sock" ] && export SSH_AUTH_SOCK="$_op_sock"
+unset _op_sock
 
-export _ZO_DATA_DIR="$XDG_DATA_HOME"
-eval "$(zoxide init zsh)"
-
+if command -v mise >/dev/null 2>&1; then eval "$(mise activate zsh)"; fi
+if command -v zoxide >/dev/null 2>&1; then eval "$(zoxide init zsh)"; fi
 if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
+

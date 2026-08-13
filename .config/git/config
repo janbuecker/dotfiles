@@ -11,11 +11,10 @@
 
 [gpg]
 	format = "ssh"
-	program = "/opt/homebrew/bin/gpg"
 
 [gpg "ssh"]
 	allowedSignersFile = "~/.ssh/allowed_signers"
-	program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+	program = "ssh-keygen"
 
 [init]
 	defaultBranch = "main"
@@ -36,4 +35,4 @@
 [user]
 	email = "j.buecker@shopware.com"
 	name = "Jan Bücker"
-	signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJlKV62/B496z2BR02s2HKI62QlDaPeXCbyDrs2TWODw"
+	signingKey = "key::ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJlKV62/B496z2BR02s2HKI62QlDaPeXCbyDrs2TWODw"
