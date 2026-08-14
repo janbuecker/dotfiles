@@ -33,6 +33,7 @@ zstyle ':completion:*' menu select
 # load plugins
 autoload -Uz compinit
 
+export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 ZSH_CONFIG="${ZDOTDIR:-$HOME}/.zshrc"
 ZSH_COMPDUMP="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump-$ZSH_VERSION"
 
@@ -98,7 +99,6 @@ export TG_PROVIDER_CACHE_DIR="$XDG_CACHE_HOME/terragrunt"
 export FZF_DEFAULT_OPTS="--height='~40%' --layout=reverse --info=inline"
 export GITHUB_TOKEN=$(gh auth token)
 
-export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 export _ZO_DATA_DIR="$XDG_DATA_HOME"
 export TF_PLUGIN_CACHE_DIR="$XDG_CACHE_HOME/terraform"
 export TF_CLI_CONFIG_FILE="$XDG_CONFIG_HOME/terraform/config.tfrc"
