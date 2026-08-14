@@ -29,8 +29,8 @@
 [tag]
 	gpgSign = true
 
-[url "https://github.com/"]
-	insteadOf = "git@github.com:"
+[url "git@github.com:"]
+	insteadOf = "https://github.com/"
 
 [user]
 	email = "j.buecker@shopware.com"
