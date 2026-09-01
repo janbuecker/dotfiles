@@ -118,10 +118,20 @@ sudo cp $XDG_CONFIG_HOME/us-altgr-intl.keylayout /Library/Keyboard\ Layouts
 .config/zsh/
   .zshenv          XDG dirs and ZDOTDIR, read by every zsh
   .zshrc           loader only, resolves the profile
-  rc.d/            core: env, history, completion, plugins, keys, aliases, tools, git
-  rc.full.d/       mac and work: darwin, dev, aws, private scripts
+  rc.d/            core, always loaded
+    10-env.zsh       brew/mise bootstrap, PATH, editor, history, completion
+    20-plugins.zsh   plugin loading, prompt, and the keybindings they provide
+    30-tools.zsh     aliases, tool integrations, helper functions
+  rc.full.d/       mac and work, only when the profile is full
+    10-darwin.zsh    1Password agent, mac only paths
+    20-dev.zsh       go, terraform, docker, dotfiles helpers
+    30-aws.zsh       aws environment and the ecs/ec2/cognito helpers
   rc.local.d/      per-machine overrides, untracked
 ```
+
+The numbering is load order, and it carries one real constraint: completion has
+to run before the plugins (syntax highlighting expects `compinit`), and the
+keybindings after them, since they bind widgets the plugins define.
 
 Git config is split the same way: `.config/git/config` is portable, and
 `.config/git/config.full` (commit signing, the github ssh rewrite) is pulled in

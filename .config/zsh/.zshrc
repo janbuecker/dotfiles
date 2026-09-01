@@ -21,6 +21,14 @@ for f in $ZDOTDIR/rc.d/*.zsh(N); do source $f; done
 
 if [[ $DOTFILES_PROFILE == full ]]; then
     for f in $ZDOTDIR/rc.full.d/*.zsh(N); do source $f; done
+
+    # Private scripts, encrypted with git-crypt. Only source them once they are
+    # actually decrypted, otherwise the encrypted blob itself would be sourced.
+    for f in $ZDOTDIR/scripts.private.d/*(N); do
+        [[ -f $f ]] || continue
+        file -b "$f" | grep -q "text" || continue
+        source $f
+    done
 fi
 
 # Machine-local overrides, not tracked
