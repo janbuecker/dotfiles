@@ -1,11 +1,62 @@
-#!/bin/bash
+alias -g ...='../..'
+alias -g ....='../../..'
+alias -g .....='../../../..'
+alias -g ......='../../../../..'
 
-# Git branch cleanup function
-# Deletes local branches that:
-# 1. Have been merged into main/master
-# 2. No longer exist on the remote
-# 3. Are not the current branch
+alias tmux="tmux -u"
+alias today='$EDITOR ~/today.md'
 
+# Guarded, so a missing tool does not shadow the real command
+(( $+commands[lazygit] )) && alias lg="lazygit"
+
+if (( $+commands[bat] )); then
+    alias cat="bat -pp"
+    alias catt="bat"
+fi
+
+# File system
+alias lsa='ls -a'
+if (( $+commands[eza] )); then
+    alias ls='eza --group-directories-first'
+    alias lt='eza --tree --level=2 --long --icons --git'
+    alias lta='lt -a'
+fi
+
+if (( $+commands[fzf] )); then
+    if (( $+commands[bat] )); then
+        alias ff="fzf --preview 'bat --style=numbers --color=always {}'"
+    else
+        alias ff="fzf --preview 'cat {}'"
+    fi
+fi
+# --- tool integrations -----------------------------------------------------
+
+export DOCKER_BUILDKIT=1
+export FZF_DEFAULT_OPTS="--height='~40%' --layout=reverse --info=inline"
+export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/config"
+export _ZO_DATA_DIR="$XDG_DATA_HOME"
+
+(( $+commands[fzf] )) && source <(fzf --zsh)
+
+if (( $+commands[zoxide] )); then
+    eval "$(zoxide init zsh)"
+
+    # cd through zoxide, falling back to a real directory argument
+    zd() {
+        if [ $# -eq 0 ]; then
+            builtin cd ~ && return
+        elif [ -d "$1" ]; then
+            builtin cd "$1"
+        else
+            z "$@" && printf "\U000F17A9 " && pwd || echo "Error: Directory not found"
+        fi
+    }
+    alias cd="zd"
+fi
+# --- functions -------------------------------------------------------------
+
+# Deletes local branches that are merged into the main branch or whose remote
+# tracking branch is gone. Never touches the current branch.
 git_cleanup() {
     echo "🧹 Starting git branch cleanup..."
 
@@ -63,8 +114,3 @@ git_cleanup() {
 
     echo "✨ Git cleanup complete!"
 }
-
-# If script is executed directly (not sourced), run the function
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    git_cleanup
-fi

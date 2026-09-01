@@ -1,3 +1,15 @@
+export AWS_PAGER=""
+export AWS_CONFIG_FILE="$XDG_CONFIG_HOME"/aws/config
+
+alias awslocal="aws --profile local"
+alias sso="aws sso login --sso-session sso"
+
+# Show the active profile on the right hand side of the prompt
+precmd_awsprofile() {
+	RPROMPT="%F{$prompt_pure_colors[git:branch]}${AWS_PROFILE}%f"
+}
+add-zsh-hook precmd precmd_awsprofile
+
 declare awsumeprofiles
 awsume() {
     # cache profiles

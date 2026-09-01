@@ -1,13 +1,32 @@
+export GOPRIVATE="github.com/shopware-saas"
+export GOLANGCI_LINT_CACHE="$XDG_CACHE_HOME"/golangci-lint
+
+export TG_PROVIDER_CACHE="1"
+export TG_PROVIDER_CACHE_DIR="$XDG_CACHE_HOME/terragrunt"
+export TF_PLUGIN_CACHE_DIR="$XDG_CACHE_HOME/terraform"
+export TF_CLI_CONFIG_FILE="$XDG_CONFIG_HOME/terraform/config.tfrc"
+
+export COMPOSER_HOME="$XDG_CONFIG_HOME"/composer
+export DOCKER_CONFIG="$XDG_CONFIG_HOME"/docker
+export HOMEBREW_BUNDLE_FILE="$XDG_CONFIG_HOME/brewfile/Brewfile"
+
+# Shells out to gh, so only when it is actually installed
+(( $+commands[gh] )) && export GITHUB_TOKEN=$(gh auth token)
+
+# needs zstd, which is not available through mise on a core box
+alias tarz="tar --use-compress-program=zstdmt"
+
+alias mclidev="go build -C ~/opt/cloud/mcli -o mcli main.go && ~/opt/cloud/mcli/mcli"
+alias ghcr='docker login ghcr.io --username $(gh config get -h github.com user) --password $(gh config get -h github.com oauth_token)'
+
+# dotfiles (bare repo with $HOME as work tree)
+alias config="git --git-dir=$HOME/dotfiles/ --work-tree=$HOME"
+alias lgdot="lg -w $HOME -g $HOME/dotfiles/"
+
 cdp() {
     local p
     p=$(find ~/opt/cloud -mindepth 1 -maxdepth 1 -type d | fzf -1 -q "$*")
     [[ -n "$p" ]] && cd "$p"
-}
-
-mfa() {
-    _code=$(ykman oath accounts code | fzf -1 -q "$1" | awk '{print $NF}')
-    echo -n $_code
-    echo $_code | pbcopy
 }
 
 gopro() {
@@ -72,3 +91,5 @@ cdop() {
 
     cd "$target" || return
 }
+
+(( $+commands[wt] )) && eval "$(command wt config shell init zsh)"
