@@ -1,10 +1,14 @@
 theme = Catppuccin Mocha
+theme = Nightfox
+
+# fix for the color palette in Catppuccin Mocha theme
+# palette = 1=#d20f39
+
 font-family = "SF Mono"
 font-size = 16
 font-feature = -calt
 macos-option-as-alt = true
 
-minimum-contrast = 1.5
 unfocused-split-opacity = 0.7
 split-divider-color = #9399b2
 window-new-tab-position = end
