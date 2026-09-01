@@ -4,12 +4,17 @@
 #   curl -fsSL https://raw.githubusercontent.com/janbuecker/dotfiles/main/install.sh | sh
 #   ./install.sh full     # also load the mac/work layer
 #
+# Installing from a branch needs DOTFILES_REF, otherwise the default branch is
+# cloned no matter which branch this script was fetched from:
+#   curl -fsSL .../<branch>/install.sh | DOTFILES_REF=<branch> sh
+#
 # The mac uses the bare repo checkout instead, see README.
 set -eu
 
 PROFILE="${1:-core}"
 DOTFILES_REPO="${DOTFILES_REPO:-https://github.com/janbuecker/dotfiles}"
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
+DOTFILES_REF="${DOTFILES_REF:-}"
 XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 
@@ -37,11 +42,30 @@ fi
 # 2. repository
 if [ -d "$DOTFILES_DIR/.git" ]; then
     say "updating $DOTFILES_DIR"
+    if [ -n "$DOTFILES_REF" ]; then
+        git -C "$DOTFILES_DIR" fetch --quiet origin "$DOTFILES_REF" || true
+        git -C "$DOTFILES_DIR" checkout --quiet "$DOTFILES_REF" || true
+    fi
     git -C "$DOTFILES_DIR" pull --ff-only || echo "  pull failed, using the existing checkout"
 else
     say "cloning into $DOTFILES_DIR"
-    git clone --quiet "$DOTFILES_REPO" "$DOTFILES_DIR"
+    if [ -n "$DOTFILES_REF" ]; then
+        git clone --quiet --branch "$DOTFILES_REF" "$DOTFILES_REPO" "$DOTFILES_DIR"
+    else
+        git clone --quiet "$DOTFILES_REPO" "$DOTFILES_DIR"
+    fi
 fi
+
+# Fail loudly rather than half installing: a checkout from before the core/full
+# split has none of these, and every later step would silently skip its work.
+for required in .config/zsh/rc.d .config/zsh/.zshrc .config/mise/config.core.toml; do
+    [ -e "$DOTFILES_DIR/$required" ] && continue
+    echo "error: $DOTFILES_DIR is missing $required" >&2
+    echo "this checkout does not contain the split shell config." >&2
+    echo "installing from a branch? re-run with DOTFILES_REF set:" >&2
+    echo "  curl -fsSL <url> | DOTFILES_REF=<branch> sh" >&2
+    exit 1
+done
 
 # 3. profile marker, read by .zshrc
 printf '%s\n' "$PROFILE" > "$DOTFILES_DIR/.config/zsh/profile"
@@ -53,7 +77,10 @@ link() {
     src="$DOTFILES_DIR/$1"
     dst="$2"
 
-    [ -e "$src" ] || return 0
+    if [ ! -e "$src" ]; then
+        echo "  WARNING: missing in the checkout, skipped: $1" >&2
+        return 0
+    fi
     mkdir -p "$(dirname "$dst")"
 
     if [ -L "$dst" ]; then

@@ -36,6 +36,15 @@ Then it hands everything else to mise and sets the login shell.
 Re-run it any time to update; it pulls and relinks. `install.sh full` switches
 the machine to the full profile.
 
+To install from a branch, set `DOTFILES_REF`. The script always clones the
+repository's default branch otherwise, no matter which branch it was fetched
+from, which would install the config from `main`:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/janbuecker/dotfiles/<branch>/install.sh \
+  | DOTFILES_REF=<branch> sh
+```
+
 mise is the only package manager on a server, the same role Homebrew has on the
 mac. It provides both the binaries (`fzf`, `zoxide`, `ripgrep`, `fd`, `eza`,
 `bat`, `neovim`, `btop`, `jq`, `tmux`) and the zsh plugins. The plugins publish no
