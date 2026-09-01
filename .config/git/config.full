@@ -1,0 +1,19 @@
+# Only linked on machines with the signing key available (1Password).
+[commit]
+	gpgSign = true
+
+[tag]
+	gpgSign = true
+
+[gpg]
+	format = "ssh"
+
+[gpg "ssh"]
+	allowedSignersFile = "~/.ssh/allowed_signers"
+	program = "ssh-keygen"
+
+[user]
+	signingKey = "key::ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJlKV62/B496z2BR02s2HKI62QlDaPeXCbyDrs2TWODw"
+
+[url "git@github.com:"]
+	insteadOf = "https://github.com/"

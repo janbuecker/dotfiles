@@ -1,11 +1,5 @@
-#!/bin/bash
-
-# Git branch cleanup function
-# Deletes local branches that:
-# 1. Have been merged into main/master
-# 2. No longer exist on the remote
-# 3. Are not the current branch
-
+# Deletes local branches that are merged into the main branch or whose remote
+# tracking branch is gone. Never touches the current branch.
 git_cleanup() {
     echo "🧹 Starting git branch cleanup..."
 
@@ -63,8 +57,3 @@ git_cleanup() {
 
     echo "✨ Git cleanup complete!"
 }
-
-# If script is executed directly (not sourced), run the function
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    git_cleanup
-fi

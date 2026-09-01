@@ -1,0 +1,27 @@
+# Core tooling for servers and LXCs, where there is no Homebrew.
+#
+# Deliberately not named config.toml: on the mac the bare checkout would put
+# that at $XDG_CONFIG_HOME/mise/config.toml and mise would start shadowing the
+# Homebrew tools. install.sh symlinks it into place on servers only.
+
+[tools]
+bat = "latest"
+btop = "latest"
+eza = "latest"
+fd = "latest"
+fzf = "latest"
+jq = "latest"
+neovim = "latest"
+ripgrep = "latest"
+tmux = "latest"
+zoxide = "latest"
+
+# Zsh plugins. These ship no release binaries, so the http backend pulls the
+# source tarball for a tag; mise strips the archive's top level directory and
+# keeps a version independent "latest" symlink, which 30-plugins.zsh sources.
+# Homebrew provides these on the mac, so nothing here is used there.
+# Versions are pinned: bump the tag in both the version and the url.
+"http:zsh-autosuggestions" = { version = "0.7.1", url = "https://github.com/zsh-users/zsh-autosuggestions/archive/refs/tags/v0.7.1.tar.gz" }
+"http:zsh-syntax-highlighting" = { version = "0.8.0", url = "https://github.com/zsh-users/zsh-syntax-highlighting/archive/refs/tags/0.8.0.tar.gz" }
+"http:zsh-history-substring-search" = { version = "1.1.0", url = "https://github.com/zsh-users/zsh-history-substring-search/archive/refs/tags/v1.1.0.tar.gz" }
+"http:pure" = { version = "1.28.3", url = "https://github.com/sindresorhus/pure/archive/refs/tags/v1.28.3.tar.gz" }

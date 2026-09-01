@@ -2,19 +2,8 @@
 	amend = "commit --amend --reuse-message=HEAD"
 	rs = "restore --staged"
 
-[commit]
-	gpgSign = true
-	template = "~/.config/git/commit"
-
 [fetch]
 	prune = true
-
-[gpg]
-	format = "ssh"
-
-[gpg "ssh"]
-	allowedSignersFile = "~/.ssh/allowed_signers"
-	program = "ssh-keygen"
 
 [init]
 	defaultBranch = "main"
@@ -26,13 +15,12 @@
 	autoSetupRemote = true
 	default = "simple"
 
-[tag]
-	gpgSign = true
-
-[url "git@github.com:"]
-	insteadOf = "https://github.com/"
-
 [user]
 	email = "j.buecker@shopware.com"
 	name = "Jan Bücker"
-	signingKey = "key::ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJlKV62/B496z2BR02s2HKI62QlDaPeXCbyDrs2TWODw"
+
+# Commit signing and the github ssh rewrite. Relative to this file, so it is
+# simply absent on a server, where install.sh links only config and ignore.
+# A missing include is ignored by git.
+[include]
+	path = config.full

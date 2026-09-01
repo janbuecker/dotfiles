@@ -1,12 +1,60 @@
-# Installation
+# Dotfiles
 
-This repository contains my workstation configuration and can be restored using the setup below.
+Zsh, git and CLI tooling for my machines. The shell config is split into two
+profiles so the same repo works on a workstation and on a bare server:
+
+| profile | loads                              | used on                      |
+| ------- | ---------------------------------- | ---------------------------- |
+| `core`  | `.config/zsh/rc.d/`                | servers, LXCs, containers    |
+| `full`  | `rc.d/` + `.config/zsh/rc.full.d/` | mac and the linux dev VM     |
+
+`core` is portable: no Homebrew, no AWS, no work tooling, and every alias and
+tool init is guarded so a missing binary never shadows a real command. `full`
+adds the AWS/ECS helpers, Terraform and Go settings, the 1Password agent and
+the private git-crypt scripts on top.
+
+The profile is picked in this order: `$DOTFILES_PROFILE`, then the marker file
+`$ZDOTDIR/profile` written by `install.sh`, then `full` on macOS and `core`
+everywhere else.
+
+## Server / LXC
+
+Needs `zsh`, `git` and `curl` from the distro; everything else is installed by
+[mise](https://mise.jdx.dev) into `$HOME`, no root required.
+
+```bash
+sudo apt install -y zsh git curl
+
+curl -fsSL https://raw.githubusercontent.com/janbuecker/dotfiles/main/install.sh | sh
+```
+
+This clones to `~/.dotfiles` and symlinks an explicit allowlist into `$HOME`
+(zsh, git, bat, ripgrep, mise). Nothing else in the repo is touched, so the
+git-crypt encrypted `.ssh/config` and AWS config never land on the machine.
+Then it hands everything else to mise and sets the login shell.
+
+Re-run it any time to update; it pulls and relinks. `install.sh full` switches
+the machine to the full profile.
+
+mise is the only package manager on a server, the same role Homebrew has on the
+mac. It provides both the binaries (`fzf`, `zoxide`, `ripgrep`, `fd`, `eza`,
+`bat`, `neovim`, `btop`, `jq`, `tmux`) and the zsh plugins. The plugins publish no
+release binaries, so they use the `http:` backend against the GitHub source
+tarball for a tag; mise strips the archive's top level directory and keeps a
+`latest` symlink, so `rc.d/30-plugins.zsh` can source a stable path.
+
+Plugin versions are pinned in `.config/mise/config.core.toml`. To upgrade one,
+bump the tag in both `version` and `url`.
+
+## Workstation (macOS)
+
+Uses a bare repository with `$HOME` as the work tree. Homebrew stays the source
+of truth for packages here; mise is only used per project.
 
 ### 1. Clone this repository to `$HOME/dotfiles`
 
-Dealing with a bare repository with a working tree in `$HOME`. The alias helps with some commands.
-
-The config option hides all untracked files in `$HOME`, so git status is actually usable.
+The alias helps with some commands. The config option hides all untracked files
+in `$HOME`, so git status is actually usable.
 
 ```bash
 git clone --bare https://github.com/janbuecker/dotfiles.git $HOME/dotfiles
@@ -54,3 +102,22 @@ defaults write -g NSWindowShouldDragOnGesture -bool true
 # Install us-altgr-intl keyboard layout
 sudo cp $XDG_CONFIG_HOME/us-altgr-intl.keylayout /Library/Keyboard\ Layouts
 ```
+
+## Layout
+
+```
+.config/zsh/
+  .zshenv          XDG dirs and ZDOTDIR, read by every zsh
+  .zshrc           loader only, resolves the profile
+  rc.d/            core: env, history, completion, plugins, keys, aliases, tools, git
+  rc.full.d/       mac and work: darwin, dev, aws, private scripts
+  rc.local.d/      per-machine overrides, untracked
+```
+
+Git config is split the same way: `.config/git/config` is portable, and
+`.config/git/config.full` (commit signing, the github ssh rewrite) is pulled in
+by a relative `[include]` that only resolves on machines where the whole
+directory is present.
+
+Machine-specific tweaks that should not be committed go in
+`.config/zsh/rc.local.d/*.zsh`.
