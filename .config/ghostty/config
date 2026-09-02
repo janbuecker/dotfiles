@@ -1,9 +1,4 @@
-theme = Catppuccin Mocha
-theme = Nightfox
-
-# fix for the color palette in Catppuccin Mocha theme
-# palette = 1=#d20f39
-
+theme = Dracula
 font-family = "SF Mono"
 font-size = 16
 font-feature = -calt
