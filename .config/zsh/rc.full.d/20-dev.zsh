@@ -16,7 +16,7 @@ export HOMEBREW_BUNDLE_FILE="$XDG_CONFIG_HOME/brewfile/Brewfile"
 # needs zstd, which is not available through mise on a core box
 alias tarz="tar --use-compress-program=zstdmt"
 
-alias mclidev="go build -C ~/opt/cloud/mcli -o mcli main.go && ~/opt/cloud/mcli/mcli"
+alias mclidev='go build -C "$XDG_PROJECTS_DIR/mcli" -o mcli main.go && "$XDG_PROJECTS_DIR/mcli/mcli"'
 alias ghcr='docker login ghcr.io --username $(gh config get -h github.com user) --password $(gh config get -h github.com oauth_token)'
 
 # dotfiles (bare repo with $HOME as work tree)
@@ -25,7 +25,7 @@ alias lgdot="lg -w $HOME -g $HOME/dotfiles/"
 
 cdp() {
     local p
-    p=$(find ~/opt/cloud -mindepth 1 -maxdepth 1 -type d | fzf -1 -q "$*")
+    p=$(find "$XDG_PROJECTS_DIR" -mindepth 1 -maxdepth 1 -type d | fzf -1 -q "$*")
     [[ -n "$p" ]] && cd "$p"
 }
 
