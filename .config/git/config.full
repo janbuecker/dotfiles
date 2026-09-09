@@ -15,5 +15,11 @@
 [user]
 	signingKey = "key::ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJlKV62/B496z2BR02s2HKI62QlDaPeXCbyDrs2TWODw"
 
-[url "git@github.com:"]
-	insteadOf = "https://github.com/"
+[url "git@github.com:janbuecker/"]
+	insteadOf = "https://github.com/janbuecker/"
+
+[url "git@github.com:shopware/"]
+	insteadOf = "https://github.com/shopware/"
+
+[url "git@github.com:shopware-saas/"]
+	insteadOf = "https://github.com/shopware-saas/"
