@@ -36,10 +36,16 @@ export PATH="$PATH:$HOME/.local/bin"
 # before anything below probes for a command. Needs $HOME/.local/bin on PATH.
 (( $+commands[mise] )) && eval "$(mise activate zsh)"
 
+# neovim on the mac, vim from the distro on a server. vim is deliberately not
+# a mise tool: its only backends build from source, which needs the compiler
+# toolchain a minimal box does not have. Set only what actually exists, so
+# EDITOR never points at a missing binary.
 if (( $+commands[nvim] )); then
     export EDITOR="nvim"
     export MANPAGER="nvim +Man!"
-else
+elif (( $+commands[vim] )); then
+    export EDITOR="vim"
+elif (( $+commands[vi] )); then
     export EDITOR="vi"
 fi
 # --- history ---------------------------------------------------------------
