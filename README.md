@@ -35,6 +35,46 @@ to tracked files are moved aside to `.bak` and replaced.
 
 ## Workstation
 
+Steps 1 and 2 differ per OS. Everything after them is the same.
+
+### 1. Prerequisites
+
+**macOS** - the command line tools:
+
+```bash
+xcode-select --install
+```
+
+**Debian / Ubuntu** - Homebrew needs a compiler and basic tools, and zsh is
+not installed by default:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y build-essential procps curl file git zsh
+chsh -s "$(command -v zsh)"
+```
+
+### 2. Homebrew
+
+**macOS:**
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+eval "$(/opt/homebrew/bin/brew shellenv)"
+```
+
+**Debian / Ubuntu:**
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+```
+
+`rc.d/10-env.zsh` finds either prefix by itself, so the `eval` is only needed
+for the rest of this shell.
+
+### 3. Dotfiles
+
 ```bash
 git clone --bare https://github.com/janbuecker/dotfiles.git $HOME/dotfiles
 
@@ -50,28 +90,32 @@ config checkout
 ```
 
 The refspec is not optional: a `--bare` clone has no `origin/main` ref, so
-without it `config status` cannot show ahead/behind. If `$HOME` already holds a
-file at a tracked path, `config checkout` overwrites it with no warning and no
-backup - move it aside first.
+without it `config status` cannot show ahead/behind. And `config checkout`
+overwrites an existing file at a tracked path with no warning and no backup,
+so move those aside first.
 
-Homebrew owns packages here:
+### 4. Packages and secrets
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-eval "$(/opt/homebrew/bin/brew shellenv)"   # /home/linuxbrew/.linuxbrew on linux
-
 brew bundle --file .config/brewfile/Brewfile
-```
 
-Then unlock the secrets, restart the shell, and reboot after the mac extras:
-
-```bash
 op document get gitcrypt --force | config crypt unlock -   # or
 config crypt unlock gitcrypt.key
+```
 
+Casks are skipped on Linux, so `op`, `tflint`, `goreleaser-pro` and
+`claude-code` have to come from somewhere else there.
+
+Restart the shell.
+
+### 5. macOS extras
+
+```bash
 defaults write -g NSWindowShouldDragOnGesture -bool true   # drag with ctrl+cmd
 sudo cp $XDG_CONFIG_HOME/us-altgr-intl.keylayout /Library/Keyboard\ Layouts
 ```
+
+Reboot afterwards.
 
 A new config needs no plumbing. The file is already in the work tree, so
 `config add .config/bat/config` is the whole workflow.
