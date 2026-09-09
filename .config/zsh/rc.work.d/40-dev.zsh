@@ -1,3 +1,24 @@
+# Work repositories. The OrbStack VM sees the mac home at the same absolute
+# path, so first existing match wins and a new machine needs no setup. :A
+# resolves symlinks: a symlinked value seeds $PWD with a logical path that
+# getcwd() disagrees with, which silently breaks Go tooling.
+if [[ -z ${XDG_PROJECTS_DIR:-} ]]; then
+    _projects=($HOME/opt/cloud(N) /Users/*/opt/cloud(N))
+    XDG_PROJECTS_DIR=${_projects[1]:-$HOME/opt/cloud}
+    unset _projects
+fi
+export XDG_PROJECTS_DIR="${XDG_PROJECTS_DIR:A}"
+
+# ~code/<repo> on every workstation, wherever the above landed.
+hash -d code="$XDG_PROJECTS_DIR"
+
+# Go
+export GOPATH="$XDG_DATA_HOME"/go
+export GOCACHE="$XDG_CACHE_HOME"/go/build
+export GOMODCACHE="$XDG_CACHE_HOME"/go/mod
+
+export PATH="$PATH:$GOPATH/bin"
+
 export GOPRIVATE="github.com/shopware-saas"
 export GOLANGCI_LINT_CACHE="$XDG_CACHE_HOME"/golangci-lint
 

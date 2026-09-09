@@ -19,8 +19,8 @@
 	email = "j.buecker@shopware.com"
 	name = "Jan Bücker"
 
-# Commit signing and the github ssh rewrite. Relative to this file, so it is
-# simply absent on a server, where install.sh links only config and ignore.
-# A missing include is ignored by git.
+# Commit signing and the github ssh rewrite. The path is relative to this file,
+# so on a server, where config.work is never checked out, the include simply
+# finds nothing and git ignores it.
 [include]
-	path = config.full
+	path = config.work

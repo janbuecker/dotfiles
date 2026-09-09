@@ -4,11 +4,15 @@ export AWS_CONFIG_FILE="$XDG_CONFIG_HOME"/aws/config
 alias awslocal="aws --profile local"
 alias sso="aws sso login --sso-session sso"
 
-# Show the active profile on the right hand side of the prompt
-precmd_awsprofile() {
-	RPROMPT="%F{$prompt_pure_colors[git:branch]}${AWS_PROFILE}%f"
-}
-add-zsh-hook precmd precmd_awsprofile
+# Show the active profile on the right hand side of the prompt. Registered only
+# with pure actually loaded, since the colour comes from its palette: an unset
+# $prompt_pure_colors would leave a bare %F{} in RPROMPT on every prompt.
+if (( ${+prompt_pure_colors} )); then
+    precmd_awsprofile() {
+        RPROMPT="%F{$prompt_pure_colors[git:branch]}${AWS_PROFILE}%f"
+    }
+    add-zsh-hook precmd precmd_awsprofile
+fi
 
 declare awsumeprofiles
 awsume() {

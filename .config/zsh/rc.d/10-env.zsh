@@ -7,29 +7,9 @@ for _brew in /opt/homebrew/bin/brew /home/linuxbrew/.linuxbrew/bin/brew /usr/loc
 done
 unset _brew
 
-# Work repositories. The OrbStack VM sees the mac home at the same absolute
-# path, so first existing match wins and a new machine needs no setup. :A
-# resolves symlinks: a symlinked value seeds $PWD with a logical path that
-# getcwd() disagrees with, which silently breaks Go tooling.
-if [[ -z ${XDG_PROJECTS_DIR:-} ]]; then
-    _projects=($HOME/opt/cloud(N) /Users/*/opt/cloud(N))
-    XDG_PROJECTS_DIR=${_projects[1]:-$HOME/opt/cloud}
-    unset _projects
-fi
-export XDG_PROJECTS_DIR="${XDG_PROJECTS_DIR:A}"
-
-# ~code/<repo> on every machine, wherever the above landed.
-hash -d code="$XDG_PROJECTS_DIR"
-
-# Go
-export GOPATH="$XDG_DATA_HOME"/go
-export GOCACHE="$XDG_CACHE_HOME"/go/build
-export GOMODCACHE="$XDG_CACHE_HOME"/go/mod
-
 # Paths
 export PATH="$PATH:$HOME/bin"
 export PATH="$PATH:/usr/local/bin"
-export PATH="$PATH:$GOPATH/bin"
 export PATH="$PATH:$HOME/.local/bin"
 
 # mise provides the tooling where there is no Homebrew, so it has to run
@@ -80,7 +60,7 @@ mkdir -p "${ZSH_COMPDUMP:h}"
 _compdump_fresh=0
 if [[ -f $ZSH_COMPDUMP ]]; then
     _compdump_fresh=1
-    for _f in $ZDOTDIR/.zshrc $ZDOTDIR/rc.d/*.zsh(N) $ZDOTDIR/rc.full.d/*.zsh(N); do
+    for _f in $ZDOTDIR/.zshrc $ZDOTDIR/rc.d/*.zsh(N) $ZDOTDIR/rc.work.d/*.zsh(N); do
         if [[ $_f -nt $ZSH_COMPDUMP ]]; then
             _compdump_fresh=0
             break

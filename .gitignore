@@ -5,6 +5,5 @@
 .config/zsh/.zcompcache
 .config/aws/**/cache/
 
-# written by install.sh / machine-local
-.config/zsh/profile
+# machine-local
 .config/zsh/rc.local.d/
