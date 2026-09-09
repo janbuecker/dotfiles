@@ -1,0 +1,22 @@
+# Sparse-checkout list for a server or LXC. install.sh copies this into
+# .git/info/sparse-checkout and appends one !line per git-crypt path in
+# .gitattributes, so newly encrypted files exclude themselves.
+#
+# Everything not listed here is checked out. Mac-only clutter is left alone on
+# purpose: a wezterm config on a box with no wezterm is inert, and keeping the
+# list short is worth more than keeping $HOME tidy. Only things that actually
+# break belong here.
+/*
+
+# The workstation shell layer. Not harmful, but this is the layer boundary.
+!/.config/zsh/rc.work.d/
+
+# Pulled in by .config/git/config through a relative include. It turns on
+# commit and tag signing with an ssh key held in 1Password, so every commit on
+# a box without that agent fails with "Couldn't get agent socket?", and it
+# rewrites https github URLs to ssh, so clones fail too.
+!/.config/git/config.work
+
+# The git-crypt key, itself encrypted to a GPG key that is not here. Useless
+# without it, but there is no reason to put it on eight machines.
+!/.git-crypt/

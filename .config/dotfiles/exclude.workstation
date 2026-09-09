@@ -1,0 +1,6 @@
+# Sparse-checkout list for a workstation (mac, linux dev VM). Everything is
+# checked out except the server's mise tool list: mise reads conf.d/*.toml
+# additively, so leaving it in place would have mise install its own eza, fzf,
+# bat and tmux and shadow the Homebrew ones.
+/*
+!/.config/mise/conf.d/server.toml

@@ -1,8 +1,9 @@
-# Core tooling for servers and LXCs, where there is no Homebrew.
+# Tooling for servers and LXCs, where there is no Homebrew.
 #
-# Deliberately not named config.toml: on the mac the bare checkout would put
-# that at $XDG_CONFIG_HOME/mise/config.toml and mise would start shadowing the
-# Homebrew tools. install.sh symlinks it into place on servers only.
+# mise reads conf.d/*.toml additively, so this needs no linking and no rename:
+# it is checked out as-is on a server, and a workstation leaves it out through
+# .config/dotfiles/exclude.workstation. Were it present on the mac, mise would
+# install its own eza, fzf, bat and tmux and shadow the Homebrew ones.
 
 [tools]
 bat = "latest"
@@ -17,7 +18,7 @@ zoxide = "latest"
 
 # Zsh plugins. These ship no release binaries, so the http backend pulls the
 # source tarball for a tag; mise strips the archive's top level directory and
-# keeps a version independent "latest" symlink, which 30-plugins.zsh sources.
+# keeps a version independent "latest" symlink, which rc.d/20-plugins.zsh sources.
 # Homebrew provides these on the mac, so nothing here is used there.
 # Versions are pinned: bump the tag in both the version and the url.
 "http:zsh-autosuggestions" = { version = "0.7.1", url = "https://github.com/zsh-users/zsh-autosuggestions/archive/refs/tags/v0.7.1.tar.gz" }
