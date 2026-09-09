@@ -1,4 +1,5 @@
 theme = Dracula
+theme = TokyoNight Moon
 font-family = "SF Mono"
 font-size = 16
 font-feature = -calt
