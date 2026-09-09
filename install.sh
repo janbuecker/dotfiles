@@ -13,15 +13,10 @@
 # replaced. Note that a plain `git pull` is NOT enough here - the exclude list
 # has to be re-derived from the new commit first, or a newly encrypted file
 # lands as an unreadable blob.
-#
-# To install from a branch, set DOTFILES_REF. Fetching this script from a
-# branch is not enough; the default branch is cloned otherwise:
-#   curl -fsSL .../<branch>/install.sh | DOTFILES_REF=<branch> sh
 set -eu
 
 DOTFILES_REPO="${DOTFILES_REPO:-https://github.com/janbuecker/dotfiles}"
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
-DOTFILES_REF="${DOTFILES_REF:-}"
 
 say() { printf '\033[1m==>\033[0m %s\n' "$1"; }
 
@@ -56,12 +51,11 @@ fi
 say "fetching"
 git fetch --quiet --prune origin
 
-branch="${DOTFILES_REF:-$(git symbolic-ref --short HEAD)}"
+branch="$(git symbolic-ref --short HEAD)"
 if ! git rev-parse --verify --quiet "refs/remotes/origin/$branch" >/dev/null; then
     echo "error: origin has no branch '$branch'" >&2
     exit 1
 fi
-git symbolic-ref HEAD "refs/heads/$branch"
 git update-ref "refs/heads/$branch" "refs/remotes/origin/$branch"
 git config "branch.$branch.remote" origin
 git config "branch.$branch.merge" "refs/heads/$branch"
