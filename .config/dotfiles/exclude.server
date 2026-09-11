@@ -11,6 +11,10 @@
 # The workstation shell layer. Not harmful, but this is the layer boundary.
 !/.config/zsh/rc.work.d/
 
+# The workstation half of the mise tool list. conf.d/server.toml is the other
+# half and stays; exclude.workstation drops that one instead.
+!/.config/mise/conf.d/work.toml
+
 # Pulled in by .config/git/config through a relative include. It turns on
 # commit and tag signing with an ssh key held in 1Password, so every commit on
 # a box without that agent fails with "Couldn't get agent socket?", and it
