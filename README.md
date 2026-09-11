@@ -94,6 +94,10 @@ without it `config status` cannot show ahead/behind. And `config checkout`
 overwrites an existing file at a tracked path with no warning and no backup,
 so move those aside first.
 
+A later change to `exclude.workstation` is picked up by `config_sync`. A server
+re-derives its list on every `install.sh` run; a workstation does not, so an
+existing clone needs that command.
+
 ### 4. Packages and secrets
 
 ```bash

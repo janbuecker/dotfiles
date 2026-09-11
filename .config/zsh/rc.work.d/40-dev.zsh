@@ -44,6 +44,28 @@ alias ghcr='docker login ghcr.io --username $(gh config get -h github.com user) 
 alias config="git --git-dir=$HOME/dotfiles/ --work-tree=$HOME"
 alias lgdot="lg -w $HOME -g $HOME/dotfiles/"
 
+# Re-apply the workstation exclude list. A server regenerates its own on every
+# install.sh run, so a change to exclude.workstation reaches it for free; a
+# workstation has nothing that does, and this is it.
+config_sync() {
+    local -a g=(git --git-dir="$HOME/dotfiles" --work-tree="$HOME")
+    local list="$HOME/dotfiles/info/sparse-checkout" tmp
+    tmp=$(mktemp) || return
+
+    # Staged through a temp file on purpose. An empty list matches nothing, so a
+    # failed show truncating it in place would leave the next reapply deleting
+    # every tracked file out of $HOME.
+    if ! $g show HEAD:.config/dotfiles/exclude.workstation > "$tmp" || [[ ! -s $tmp ]]; then
+        rm -f "$tmp"
+        print -u2 "config_sync: cannot read exclude.workstation from HEAD"
+        return 1
+    fi
+
+    mv "$tmp" "$list"
+    $g config --local core.sparseCheckout true
+    $g sparse-checkout reapply
+}
+
 cdp() {
     local p
     p=$(find "$XDG_PROJECTS_DIR" -mindepth 1 -maxdepth 1 -type d | fzf -1 -q "$*")
